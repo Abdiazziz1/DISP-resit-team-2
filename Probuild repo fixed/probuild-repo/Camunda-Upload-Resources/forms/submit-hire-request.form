@@ -1,0 +1,171 @@
+{
+    "executionPlatform": "Camunda Cloud",
+    "executionPlatformVersion": "8.8.0",
+    "exporter": {
+        "name": "Camunda Web Modeler",
+        "version": "4327945"
+    },
+    "schemaVersion": 19,
+    "id": "submit-hire-request",
+    "components": [
+        {
+            "text": "### Tool Hire Request",
+            "type": "text",
+            "id": "Heading_main",
+            "layout": {
+                "row": "row_0",
+                "col": 16
+            }
+        },
+        {
+            "text": "##### Customer Details",
+            "type": "text",
+            "id": "Subheading_customer",
+            "layout": {
+                "row": "row_1",
+                "col": 16
+            }
+        },
+        {
+            "label": "Customer Name",
+            "type": "textfield",
+            "id": "Field_CustomerName",
+            "key": "customerName",
+            "validate": {
+                "required": true,
+                "minLength": 2,
+                "maxLength": 100
+            },
+            "layout": {
+                "row": "row_2",
+                "col": 8
+            }
+        },
+        {
+            "label": "Contact Email",
+            "type": "textfield",
+            "id": "Field_ContactEmail",
+            "key": "contactEmail",
+            "description": "e.g., user@example.com",
+            "validate": {
+                "required": true,
+                "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+            },
+            "layout": {
+                "row": "row_2",
+                "col": 8
+            },
+            "errorMessage": {
+                "pattern": "Enter a valid email address, e.g. name@example.com"
+            }
+        },
+        {
+            "text": "##### Hire Details",
+            "type": "text",
+            "id": "Subheading_hire",
+            "layout": {
+                "row": "row_3",
+                "col": 16
+            }
+        },
+        {
+            "label": "Tool Type",
+            "values": [
+                {
+                    "label": "Power Drill",
+                    "value": "powerDrill"
+                },
+                {
+                    "label": "Circular Saw",
+                    "value": "circularSaw"
+                },
+                {
+                    "label": "Ladder (10ft)",
+                    "value": "ladder10ft"
+                },
+                {
+                    "label": "Generator",
+                    "value": "generator"
+                },
+                {
+                    "label": "Pressure Washer",
+                    "value": "pressureWasher"
+                }
+            ],
+            "type": "select",
+            "id": "Field_ToolType",
+            "key": "toolType",
+            "validate": {
+                "required": true
+            },
+            "layout": {
+                "row": "row_4",
+                "col": 6
+            }
+        },
+        {
+            "subtype": "date",
+            "type": "datetime",
+            "id": "Field_HireStartDate",
+            "key": "hireStartDate",
+            "dateLabel": "Hire Start Date",
+            "validate": {
+                "required": true
+            },
+            "layout": {
+                "row": "row_4",
+                "col": 5
+            }
+        },
+        {
+            "subtype": "date",
+            "type": "datetime",
+            "id": "Field_HireEndDate",
+            "key": "hireEndDate",
+            "dateLabel": "Hire End Date",
+            "validate": {
+                "required": true
+            },
+            "layout": {
+                "row": "row_4",
+                "col": 5
+            }
+        },
+        {
+            "text": "##### Payment",
+            "type": "text",
+            "id": "Subheading_payment",
+            "layout": {
+                "row": "row_5",
+                "col": 16
+            }
+        },
+        {
+            "label": "Deposit Amount",
+            "type": "number",
+            "id": "Field_DepositAmount",
+            "key": "depositAmount",
+            "validate": {
+                "required": true,
+                "min": 0,
+                "max": 5000
+            },
+            "layout": {
+                "row": "row_6",
+                "col": 8
+            }
+        },
+        {
+            "label": "Trade Card Member?",
+            "type": "checkbox",
+            "id": "Field_TradeCardMember",
+            "key": "tradeCardMember",
+            "layout": {
+                "row": "row_7",
+                "col": 8
+            }
+        }
+    ],
+    "generated": true,
+    "type": "default"
+}

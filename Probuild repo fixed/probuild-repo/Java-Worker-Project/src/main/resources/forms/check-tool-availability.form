@@ -1,0 +1,41 @@
+{
+    "executionPlatform": "Camunda Cloud",
+    "executionPlatformVersion": "8.8.0",
+    "exporter": {
+        "name": "Camunda Web Modeler",
+        "version": "116eb56"
+    },
+    "schemaVersion": 19,
+    "id": "check-tool-availability",
+    "components": [
+        {
+            "type": "textfield",
+            "label": "Tool ID",
+            "key": "toolId",
+            "validate": {
+                "required": true,
+                "pattern": "^[A-Za-z0-9-]{3,20}$"
+            },
+            "errorMessage": {
+                "pattern": "Tool ID must be 3-20 letters, numbers or hyphens"
+            }
+        },
+        {
+            "type": "textfield",
+            "label": "Customer name",
+            "key": "customerName",
+            "validate": {
+                "required": true,
+                "minLength": 2,
+                "maxLength": 100
+            }
+        },
+        {
+            "type": "checkbox",
+            "label": "Tool available",
+            "key": "toolAvailable",
+            "defaultValue": true
+        }
+    ],
+    "type": "default"
+}

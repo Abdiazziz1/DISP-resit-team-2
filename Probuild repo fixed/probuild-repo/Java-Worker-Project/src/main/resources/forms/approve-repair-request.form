@@ -1,0 +1,41 @@
+{
+    "executionPlatform": "Camunda Cloud",
+    "executionPlatformVersion": "8.8.0",
+    "exporter": {
+        "name": "Camunda Web Modeler",
+        "version": "116eb56"
+    },
+    "schemaVersion": 19,
+    "id": "approve-repair-request",
+    "components": [
+        {
+            "type": "textfield",
+            "label": "Tool ID",
+            "key": "toolId",
+            "validate": {
+                "required": true,
+                "pattern": "^[A-Za-z0-9-]{3,20}$"
+            },
+            "errorMessage": {
+                "pattern": "Tool ID must be 3-20 letters, numbers or hyphens"
+            }
+        },
+        {
+            "type": "number",
+            "label": "Estimated repair cost",
+            "key": "repairCost",
+            "validate": {
+                "required": true,
+                "min": 0,
+                "max": 5000
+            }
+        },
+        {
+            "type": "checkbox",
+            "label": "Approve repair",
+            "key": "repairApproved",
+            "defaultValue": true
+        }
+    ],
+    "type": "default"
+}

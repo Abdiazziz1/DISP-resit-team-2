@@ -1,0 +1,29 @@
+{
+    "executionPlatform": "Camunda Cloud",
+    "executionPlatformVersion": "8.8.0",
+    "exporter": {
+        "name": "Camunda Web Modeler",
+        "version": "116eb56"
+    },
+    "schemaVersion": 19,
+    "id": "payment",
+    "components": [
+        {
+            "type": "number",
+            "label": "Payment amount",
+            "key": "paymentAmount",
+            "validate": {
+                "required": true,
+                "min": 0.01,
+                "max": 10000
+            }
+        },
+        {
+            "type": "checkbox",
+            "label": "Payment successful",
+            "key": "paymentSuccessful",
+            "defaultValue": true
+        }
+    ],
+    "type": "default"
+}

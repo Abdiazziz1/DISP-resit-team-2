@@ -1,0 +1,44 @@
+{
+    "executionPlatform": "Camunda Cloud",
+    "executionPlatformVersion": "8.8.0",
+    "exporter": {
+        "name": "Camunda Web Modeler",
+        "version": "116eb56"
+    },
+    "schemaVersion": 19,
+    "id": "fixpro-service-report",
+    "components": [
+        {
+            "type": "textfield",
+            "label": "Technician ID",
+            "key": "technicianId",
+            "validate": {
+                "required": true,
+                "pattern": "^[A-Za-z0-9-]{3,20}$"
+            },
+            "errorMessage": {
+                "pattern": "Technician ID must be 3-20 letters, numbers or hyphens"
+            }
+        },
+        {
+            "type": "textarea",
+            "label": "Service notes",
+            "key": "serviceNotes",
+            "validate": {
+                "required": true,
+                "maxLength": 1000
+            }
+        },
+        {
+            "type": "number",
+            "label": "Invoice amount",
+            "key": "invoiceAmount",
+            "validate": {
+                "required": true,
+                "min": 0,
+                "max": 5000
+            }
+        }
+    ],
+    "type": "default"
+}

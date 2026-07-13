@@ -1,0 +1,52 @@
+{
+    "executionPlatform": "Camunda Cloud",
+    "executionPlatformVersion": "8.8.0",
+    "exporter": {
+        "name": "Camunda Web Modeler",
+        "version": "116eb56"
+    },
+    "schemaVersion": 19,
+    "id": "finance-application",
+    "components": [
+        {
+            "type": "textfield",
+            "label": "Customer name",
+            "key": "customerName",
+            "validate": {
+                "required": true,
+                "minLength": 2,
+                "maxLength": 100
+            }
+        },
+        {
+            "type": "number",
+            "label": "Order total",
+            "key": "orderTotal",
+            "validate": {
+                "required": true,
+                "min": 100,
+                "max": 50000
+            }
+        },
+        {
+            "type": "select",
+            "label": "Finance decision for demo",
+            "key": "financeDecision",
+            "values": [
+                {
+                    "label": "Approved",
+                    "value": "approved"
+                },
+                {
+                    "label": "Declined",
+                    "value": "declined"
+                }
+            ],
+            "defaultValue": "approved",
+            "validate": {
+                "required": true
+            }
+        }
+    ],
+    "type": "default"
+}

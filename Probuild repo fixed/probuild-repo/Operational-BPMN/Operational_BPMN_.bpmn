@@ -1,0 +1,3658 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_ProBuild" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.48.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:error id="Err_deposit" name="Deposit payment error" errorCode="DEPOSIT_ERROR" />
+  <bpmn:error id="Err_fintrust_api" name="FinTrust API error" errorCode="FINTRUST_API_ERROR" />
+  <bpmn:error id="Err_ims" name="IMS error" errorCode="IMS_ERROR" />
+  <bpmn:error id="Err_payment" name="Payment error" errorCode="PAYMENT_ERROR" />
+  <bpmn:error id="Err_transit" name="Transit error" errorCode="TRANSIT_ERROR" />
+  <bpmn:message id="Msg_receive-monthly-repayments-from-customer-6-or-12-months" name="Receive monthly repayments from customer (6 or 12 months)">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_receive-credit-application-from-probuild" name="Receive credit application from ProBuild">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_receive-repair-decision-from-probuild" name="Receive repair decision from ProBuild">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_receive-approval-or-rejection-from-fintrust" name="Receive approval or rejection from FinTrust">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_receive-full-payment-from-fintrust-uk" name="Receive full payment from FinTrust UK">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_receive-serviced-tools-back-from-fixpro" name="Receive serviced tools back from FixPro">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_receive-returned-tool-from-customer" name="Receive returned tool from customer">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_receive-payment-failure-notice" name="Receive payment failure notice">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_receive-order-confirmation" name="Receive order confirmation">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_receive-finance-decision" name="Receive finance decision">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_receive-unavailability-notice" name="Receive unavailability notice">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_receive-booking-confirmation" name="Receive booking confirmation">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_delivery-order-received-from-warehouse" name="Delivery order received from warehouse">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_finance-opt-in-received-from-customer" name="Finance opt-in received from customer">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_hire-request-received" name="Hire request received">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Msg_order-received-from-customer" name="Order received from customer">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=correlationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:collaboration id="Collab_ProBuild">
+    <bpmn:participant id="Part_Customer" name="Customer" processRef="Proc_Customer" />
+    <bpmn:participant id="Part_ProBuild" name="ProBuild Supplies Ltd" processRef="Proc_ProBuild" />
+    <bpmn:participant id="Part_FixPro" name="FixPro Ltd" processRef="Proc_FixPro" />
+    <bpmn:participant id="Part_FinTrust" name="FinTrust UK" processRef="Proc_FinTrust" />
+    <bpmn:messageFlow id="MF_HireReq" sourceRef="cT_submitHire" targetRef="thS_hireRcvd" />
+    <bpmn:messageFlow id="MF_BookConf" sourceRef="thT_sendConfirm" targetRef="cT_rcvBookConf" />
+    <bpmn:messageFlow id="MF_THPayFail" sourceRef="thT_sendPayFail" targetRef="cT_rcvPayFail" />
+    <bpmn:messageFlow id="MF_RetailOrder" sourceRef="cT_placeOrder" targetRef="rsS_orderRcvd" />
+    <bpmn:messageFlow id="MF_OrderConf" sourceRef="rsT_sendOrderConf" targetRef="cT_rcvOrderConf" />
+    <bpmn:messageFlow id="MF_FinanceOptIn" sourceRef="cT_optInFin" targetRef="fcS_finRcvd" />
+    <bpmn:messageFlow id="MF_FinApproval" sourceRef="fcT_sendApprovalToCust" targetRef="cT_rcvFinDecision" />
+    <bpmn:messageFlow id="MF_ToolReturn" sourceRef="cT_returnTool" targetRef="thT_rcvReturn" />
+    <bpmn:messageFlow id="MF_Handover" sourceRef="whT_prepHandover" targetRef="fpT_collect" />
+    <bpmn:messageFlow id="MF_FPReturn" sourceRef="fpT_returnTools" targetRef="whT_rcvServiced" />
+    <bpmn:messageFlow id="MF_RepairAuthReq" sourceRef="fpT_reqAuth" targetRef="Part_ProBuild" />
+    <bpmn:messageFlow id="MF_RepairApproval" sourceRef="thT_sendApproval" targetRef="fpT_rcvRepairDec" />
+    <bpmn:messageFlow id="MF_RepairReject" sourceRef="thT_sendRejection" targetRef="fpT_rcvRepairDec" />
+    <bpmn:messageFlow id="MF_ServiceReport" sourceRef="fpT_uploadReport" targetRef="imsT_syncFixPro" />
+    <bpmn:messageFlow id="MF_CreditApp" sourceRef="fcT_sendCreditApp" targetRef="ftT_rcvCreditApp" />
+    <bpmn:messageFlow id="MF_FTDecision" sourceRef="ftT_sendDecision" targetRef="fcT_rcvFTDecision" />
+    <bpmn:messageFlow id="MF_FTPayment" sourceRef="ftT_payProBuild" targetRef="fcT_rcvFTPayment" />
+    <bpmn:messageFlow id="MF_CustRepay" sourceRef="cT_monthlyRepay" targetRef="ftT_rcvRepayment" />
+    <bpmn:messageFlow id="MF_OOSStatus" sourceRef="fpT_markOOS_direct" targetRef="imsT_statusOOS" />
+  </bpmn:collaboration>
+  <bpmn:process id="Proc_Customer" name="Customer" isExecutable="false">
+    <bpmn:userTask id="cT_browse" name="Browse products in-store or online">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:assignmentDefinition assignee="demo" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0011</bpmn:incoming>
+      <bpmn:outgoing>SF_0012</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="cT_placeOrder" name="Select products and place order">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="place-retail-order" bindingType="deployment" />
+        <zeebe:assignmentDefinition assignee="demo" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0012</bpmn:incoming>
+      <bpmn:outgoing>SF_0013</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="cE_finDeclined" name="Finance declined">
+      <bpmn:incoming>SF_0023</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="cT_checkAvail" name="Check tool availability online or in-store">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="check-tool-availability" bindingType="deployment" />
+        <zeebe:assignmentDefinition assignee="demo" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0001</bpmn:incoming>
+      <bpmn:outgoing>SF_0002</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="cT_submitHire" name="Submit hire request">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="submit-hire-request" bindingType="deployment" />
+        <zeebe:assignmentDefinition assignee="demo" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0002</bpmn:incoming>
+      <bpmn:outgoing>SF_0003</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:receiveTask id="cT_rcvBookConf" name="Receive booking confirmation" messageRef="Msg_receive-booking-confirmation">
+      <bpmn:incoming>SF_0003</bpmn:incoming>
+      <bpmn:outgoing>SF_0004</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:manualTask id="cT_useTool" name="Use hired tool">
+      <bpmn:incoming>SF_0008</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bua32t</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="cG_confirmed" name="Booking confirmed?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0004</bpmn:incoming>
+      <bpmn:outgoing>SF_0005</bpmn:outgoing>
+      <bpmn:outgoing>SF_0006</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:manualTask id="cT_collectTool" name="Collect tool from ProBuild">
+      <bpmn:incoming>SF_0005</bpmn:incoming>
+      <bpmn:outgoing>SF_0008</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="cT_takeGoods" name="Take goods immediately (finance approved)">
+      <bpmn:incoming>SF_0022</bpmn:incoming>
+      <bpmn:outgoing>SF_0024</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:endEvent id="cE_unavailEnd" name="Tool unavailable">
+      <bpmn:incoming>SF_0007</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:receiveTask id="cT_rcvUnavail" name="Receive unavailability notice" messageRef="Msg_receive-unavailability-notice">
+      <bpmn:incoming>SF_0006</bpmn:incoming>
+      <bpmn:outgoing>SF_0007</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:userTask id="cT_optInFin" name="Opt in to interest-free finance">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="finance-application" bindingType="deployment" />
+        <zeebe:assignmentDefinition assignee="demo" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0014</bpmn:incoming>
+      <bpmn:outgoing>SF_0020</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="cG_tradeCard" name="Trade Card member and purchase ≥ £100?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0013</bpmn:incoming>
+      <bpmn:outgoing>SF_0014</bpmn:outgoing>
+      <bpmn:outgoing>SF_0015</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:receiveTask id="cT_rcvFinDecision" name="Receive finance decision" messageRef="Msg_receive-finance-decision">
+      <bpmn:incoming>SF_0020</bpmn:incoming>
+      <bpmn:outgoing>SF_0021</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:exclusiveGateway id="cG_finApproved" name="Finance approved?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0021</bpmn:incoming>
+      <bpmn:outgoing>SF_0023</bpmn:outgoing>
+      <bpmn:outgoing>SF_0022</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="cT_monthlyRepay" name="Make monthly repayments to FinTrust (6 or 12 months)">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="payment" bindingType="deployment" />
+        <zeebe:assignmentDefinition assignee="demo" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0024</bpmn:incoming>
+      <bpmn:outgoing>SF_0025</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="cE_finPaid" name="Finance repaid">
+      <bpmn:incoming>SF_0025</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:startEvent id="cS_start" name="Customer decides to buy or hire">
+      <bpmn:outgoing>SF_startToGw</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="cG_buyOrHire" name="Buy or Hire?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_startToGw</bpmn:incoming>
+      <bpmn:outgoing>SF_0011</bpmn:outgoing>
+      <bpmn:outgoing>SF_0001</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="cT_payStd" name="Pay by cash or card">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="payment" bindingType="deployment" />
+        <zeebe:assignmentDefinition assignee="demo" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0015</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jidb8x</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:receiveTask id="cT_rcvOrderConf" name="Receive order confirmation" messageRef="Msg_receive-order-confirmation">
+      <bpmn:incoming>Flow_0jidb8x</bpmn:incoming>
+      <bpmn:outgoing>SF_0019</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:endEvent id="cE_retailEnd" name="Purchase complete">
+      <bpmn:incoming>SF_0019</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:receiveTask id="cT_rcvPayFail" name="Receive payment failure notice" messageRef="Msg_receive-payment-failure-notice">
+      <bpmn:outgoing>SF_0026</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:endEvent id="cE_payFailEnd" name="Booking failed — end">
+      <bpmn:incoming>SF_0026</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SF_startToGw" sourceRef="cS_start" targetRef="cG_buyOrHire" />
+    <bpmn:sequenceFlow id="SF_0011" name="Buy" sourceRef="cG_buyOrHire" targetRef="cT_browse" />
+    <bpmn:sequenceFlow id="SF_0012" sourceRef="cT_browse" targetRef="cT_placeOrder" />
+    <bpmn:sequenceFlow id="SF_0013" sourceRef="cT_placeOrder" targetRef="cG_tradeCard" />
+    <bpmn:sequenceFlow id="SF_0023" name="declined" sourceRef="cG_finApproved" targetRef="cE_finDeclined">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=declined</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0001" name="Hire" sourceRef="cG_buyOrHire" targetRef="cT_checkAvail" />
+    <bpmn:sequenceFlow id="SF_0002" sourceRef="cT_checkAvail" targetRef="cT_submitHire" />
+    <bpmn:sequenceFlow id="SF_0003" sourceRef="cT_submitHire" targetRef="cT_rcvBookConf" />
+    <bpmn:sequenceFlow id="SF_0004" sourceRef="cT_rcvBookConf" targetRef="cG_confirmed" />
+    <bpmn:sequenceFlow id="SF_0010" sourceRef="cT_returnTool" targetRef="cE_hireEnd" />
+    <bpmn:sequenceFlow id="SF_0008" sourceRef="cT_collectTool" targetRef="cT_useTool" />
+    <bpmn:sequenceFlow id="SF_0005" name="yes" sourceRef="cG_confirmed" targetRef="cT_collectTool">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=confirmed</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0006" name="no" sourceRef="cG_confirmed" targetRef="cT_rcvUnavail">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=unavailable</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0022" name="approved" sourceRef="cG_finApproved" targetRef="cT_takeGoods">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=approved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0024" sourceRef="cT_takeGoods" targetRef="cT_monthlyRepay" />
+    <bpmn:sequenceFlow id="SF_0007" sourceRef="cT_rcvUnavail" targetRef="cE_unavailEnd" />
+    <bpmn:sequenceFlow id="SF_0014" name="yes — Trade Card" sourceRef="cG_tradeCard" targetRef="cT_optInFin">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=tradeCard</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0020" sourceRef="cT_optInFin" targetRef="cT_rcvFinDecision" />
+    <bpmn:sequenceFlow id="SF_0015" name="no" sourceRef="cG_tradeCard" targetRef="cT_payStd">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=standard</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0021" sourceRef="cT_rcvFinDecision" targetRef="cG_finApproved" />
+    <bpmn:sequenceFlow id="SF_0025" sourceRef="cT_monthlyRepay" targetRef="cE_finPaid" />
+    <bpmn:sequenceFlow id="Flow_0jidb8x" sourceRef="cT_payStd" targetRef="cT_rcvOrderConf" />
+    <bpmn:sequenceFlow id="SF_0019" sourceRef="cT_rcvOrderConf" targetRef="cE_retailEnd" />
+    <bpmn:sequenceFlow id="SF_0026" sourceRef="cT_rcvPayFail" targetRef="cE_payFailEnd" />
+    <bpmn:endEvent id="cE_hireEnd" name="Hire journey complete">
+      <bpmn:incoming>SF_0010</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:manualTask id="cT_returnTool" name="Return tool on agreed date">
+      <bpmn:incoming>Flow_08n4r2t</bpmn:incoming>
+      <bpmn:outgoing>SF_0010</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:endEvent id="cE_lateFee" name="Late-fee reminder sent">
+      <bpmn:incoming>Flow_0a9vnzw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0bua32t" name="has returned date passed" sourceRef="cT_useTool" targetRef="Gateway_0z05dmx" />
+    <bpmn:exclusiveGateway id="Gateway_0z05dmx">
+      <bpmn:incoming>Flow_0bua32t</bpmn:incoming>
+      <bpmn:outgoing>Flow_08n4r2t</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0a9vnzw</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_08n4r2t" name="no" sourceRef="Gateway_0z05dmx" targetRef="cT_returnTool" />
+    <bpmn:sequenceFlow id="Flow_0a9vnzw" name="yes" sourceRef="Gateway_0z05dmx" targetRef="cE_lateFee" />
+  </bpmn:process>
+  <bpmn:process id="Proc_ProBuild" name="ProBuild Supplies Ltd" isExecutable="true">
+    <bpmn:laneSet id="LS_ProBuild">
+      <bpmn:lane id="Lane_LOG" name="Logistics / Delivery">
+        <bpmn:flowNodeRef>logS_delOrderRcvd</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>logT_assignVan</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>logT_deliver</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>logT_confirm</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>logE_delivered</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_FC" name="Finance / Trade Card System">
+        <bpmn:flowNodeRef>fcG_eligible</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fcT_sendCreditApp</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fcT_sendApprovalToCust</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fcT_rcvFTPayment</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fcT_recordTx</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fcT_accruePoints</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fcT_applyDiscount</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fcE_complete</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fcT_rcvFTDecision</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fcG_ftApproved</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fcE_declined</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fcE_notEligible</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fcS_finRcvd</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>fcT_validateTC</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_WH" name="Warehouse Staff">
+        <bpmn:flowNodeRef>whT_pickOrder</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>whE_orderPicked</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>whS_supplierDel</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>whT_receiveGoods</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>whT_scanBin</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>whT_dailyCheck</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>whT_weeklyCycle</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>whE_stockUpdated</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>whT_moveToServiceBay</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>whT_prepHandover</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>whT_rcvServiced</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>whT_rescan</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>whT_relocate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>whE_toolReady</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>imsT_statusInService</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>imsT_updateOnlineWH</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>imsE_whUpdated</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>imsT_syncFixPro</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>imsT_statusReadyToHire</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>imsT_statusOOS</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_TH" name="Tool Hire Staff">
+        <bpmn:flowNodeRef>thS_hireRcvd</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>thT_sendApproval</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>thT_tagMaint</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>thT_updateReadyDirect</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>thE_hireEnd</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>thT_approveRepair</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>thT_sendRejection</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>thG_repairApproved</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>thT_sendConfirm</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>thT_issueTool</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>thT_conditionLog</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>thT_rcvReturn</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>thT_inspectTool</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>thG_maintRequired</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>imsT_reserveOnBooking</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>imsT_updateOnlineTH</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>imsE_thUpdated</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>imsT_statusHired</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>imsT_statusReturned</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SubProcess_HireBooking</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_RS" name="Retail Sales Staff">
+        <bpmn:flowNodeRef>rsT_prepCollect</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsS_orderRcvd</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsT_processPayment</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsG_paymentOK</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsT_tradeCardPoints</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsG_fulfilment</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsT_checkStock</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsG_stockAvail</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsT_notifyOOS</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsE_oosEnd</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsE_payFailEnd</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsT_arrangeDelivery</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsT_sendPayFail</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsT_sendOrderConf</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsE_fulfilled</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>rsE_payErrTech</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>imsT_stockOnSale</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>imsT_updateOnlineRS</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>imsE_rsUpdated</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:sequenceFlow id="SF_err_rsB_payErr" sourceRef="rsB_payErr" targetRef="rsE_payErrTech" />
+    <bpmn:sequenceFlow id="SF_err_imsB_imsErr" sourceRef="imsB_imsErr" targetRef="imsE_imsErr" />
+    <bpmn:sequenceFlow id="SF_err_fcB_apiErr" sourceRef="fcB_apiErr" targetRef="fcE_apiErr" />
+    <bpmn:sequenceFlow id="SF_err_thB_depositErr" sourceRef="thB_depositErr" targetRef="thE_depositErr" />
+    <bpmn:sequenceFlow id="SF_0110" sourceRef="logT_confirm" targetRef="logE_delivered" />
+    <bpmn:sequenceFlow id="SF_0109" sourceRef="logT_deliver" targetRef="logT_confirm" />
+    <bpmn:sequenceFlow id="SF_0108" sourceRef="logT_assignVan" targetRef="logT_deliver" />
+    <bpmn:sequenceFlow id="SF_0107" sourceRef="logS_delOrderRcvd" targetRef="logT_assignVan" />
+    <bpmn:sequenceFlow id="SF_0079" sourceRef="fcS_finRcvd" targetRef="fcT_validateTC" />
+    <bpmn:sequenceFlow id="SF_0086" name="declined" sourceRef="fcG_ftApproved" targetRef="fcE_declined">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=declined</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0084" sourceRef="fcT_rcvFTDecision" targetRef="fcG_ftApproved" />
+    <bpmn:sequenceFlow id="SF_0091" sourceRef="fcT_applyDiscount" targetRef="fcE_complete" />
+    <bpmn:sequenceFlow id="SF_0090" sourceRef="fcT_accruePoints" targetRef="fcT_applyDiscount" />
+    <bpmn:sequenceFlow id="SF_0089" sourceRef="fcT_recordTx" targetRef="fcT_accruePoints" />
+    <bpmn:sequenceFlow id="SF_0088" sourceRef="fcT_rcvFTPayment" targetRef="fcT_recordTx" />
+    <bpmn:sequenceFlow id="SF_0087" sourceRef="fcT_sendApprovalToCust" targetRef="fcT_rcvFTPayment" />
+    <bpmn:sequenceFlow id="SF_0085" name="approved" sourceRef="fcG_ftApproved" targetRef="fcT_sendApprovalToCust">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=approved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0083" sourceRef="fcT_sendCreditApp" targetRef="fcT_rcvFTDecision" />
+    <bpmn:sequenceFlow id="SF_0082" name="not eligible" sourceRef="fcG_eligible" targetRef="fcE_notEligible">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=notEligible</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0081" name="eligible" sourceRef="fcG_eligible" targetRef="fcT_sendCreditApp">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=eligible</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0080" sourceRef="fcT_validateTC" targetRef="fcG_eligible" />
+    <bpmn:sequenceFlow id="Flow_1hd09jj" sourceRef="whT_relocate" targetRef="whE_toolReady" />
+    <bpmn:sequenceFlow id="Flow_0s4vq0w" sourceRef="whT_rescan" targetRef="whT_relocate" />
+    <bpmn:sequenceFlow id="SF_0097" sourceRef="whT_rcvServiced" targetRef="whT_rescan" />
+    <bpmn:sequenceFlow id="SF_0073" sourceRef="whT_prepHandover" targetRef="whT_rcvServiced" />
+    <bpmn:sequenceFlow id="SF_0072" sourceRef="whT_moveToServiceBay" targetRef="whT_prepHandover" />
+    <bpmn:sequenceFlow id="SF_0070" sourceRef="whT_weeklyCycle" targetRef="whE_stockUpdated" />
+    <bpmn:sequenceFlow id="SF_0069" sourceRef="whT_dailyCheck" targetRef="whT_weeklyCycle" />
+    <bpmn:sequenceFlow id="SF_0068" sourceRef="whT_scanBin" targetRef="whT_dailyCheck" />
+    <bpmn:sequenceFlow id="SF_0067" sourceRef="whT_receiveGoods" targetRef="whT_scanBin" />
+    <bpmn:sequenceFlow id="SF_0066" sourceRef="whS_supplierDel" targetRef="whT_receiveGoods" />
+    <bpmn:sequenceFlow id="SF_0078" sourceRef="whT_pickOrder" targetRef="whE_orderPicked" />
+    <bpmn:sequenceFlow id="SF_0058" sourceRef="thT_inspectTool" targetRef="thG_maintRequired" />
+    <bpmn:sequenceFlow id="SF_0095" sourceRef="thT_inspectTool" targetRef="imsT_statusReturned" />
+    <bpmn:sequenceFlow id="SF_0057" sourceRef="thT_rcvReturn" targetRef="thT_inspectTool" />
+    <bpmn:sequenceFlow id="SF_0056" sourceRef="thT_conditionLog" targetRef="thT_rcvReturn" />
+    <bpmn:sequenceFlow id="SF_0055" sourceRef="thT_issueTool" targetRef="thT_conditionLog" />
+    <bpmn:sequenceFlow id="SF_0094" sourceRef="thT_issueTool" targetRef="imsT_statusHired" />
+    <bpmn:sequenceFlow id="SF_0054" sourceRef="thT_sendConfirm" targetRef="thT_issueTool" />
+    <bpmn:sequenceFlow id="SF_0053" sourceRef="SubProcess_HireBooking" targetRef="thT_sendConfirm" />
+    <bpmn:sequenceFlow id="SF_0093" sourceRef="SubProcess_HireBooking" targetRef="imsT_reserveOnBooking" />
+    <bpmn:sequenceFlow id="SF_0052" sourceRef="thT_sendPayFail" targetRef="thE_payFailEnd" />
+    <bpmn:sequenceFlow id="SF_0065" name="rejected" sourceRef="thG_repairApproved" targetRef="thT_sendRejection">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=not(repairApproved)</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0063" sourceRef="thT_approveRepair" targetRef="thG_repairApproved" />
+    <bpmn:sequenceFlow id="SF_0060" sourceRef="thT_updateReadyDirect" targetRef="thE_hireEnd" />
+    <bpmn:sequenceFlow id="SF_0059" name="no maintenance needed" sourceRef="thG_maintRequired" targetRef="thT_updateReadyDirect">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=no</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0062" sourceRef="thT_tagMaint" targetRef="thT_approveRepair" />
+    <bpmn:sequenceFlow id="SF_0071" sourceRef="thT_tagMaint" targetRef="whT_moveToServiceBay" />
+    <bpmn:sequenceFlow id="SF_0061" name="yes — needs maintenance" sourceRef="thG_maintRequired" targetRef="thT_tagMaint">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=yes</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0064" name="approved" sourceRef="thG_repairApproved" targetRef="thT_sendApproval">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=repairApproved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0051" name="no" sourceRef="thG_payOK" targetRef="thT_sendPayFail">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=no</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0050" name="yes" sourceRef="thG_payOK" targetRef="thT_genConfirm">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=yes</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0049" sourceRef="thT_processDeposit" targetRef="thG_payOK" />
+    <bpmn:sequenceFlow id="SF_0048" sourceRef="thT_createBooking" targetRef="thT_processDeposit" />
+    <bpmn:sequenceFlow id="SF_0045" name="yes" sourceRef="thG_available" targetRef="thT_createBooking">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=yes</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0044" sourceRef="thT_checkIMS" targetRef="thG_available" />
+    <bpmn:sequenceFlow id="SF_0043" sourceRef="thT_validate" targetRef="thT_checkIMS" />
+    <bpmn:subProcess id="SubProcess_HireBooking" name="Process Hire Booking Request">
+      <bpmn:incoming>SF_0042</bpmn:incoming>
+      <bpmn:incoming>Flow_subHireStart</bpmn:incoming>
+      <bpmn:outgoing>SF_0053</bpmn:outgoing>
+      <bpmn:outgoing>SF_0093</bpmn:outgoing>
+      <bpmn:outgoing>Flow_subHireEnd</bpmn:outgoing>
+      <bpmn:startEvent id="Start_HireBookingSub" name="Booking Request Received">
+        <bpmn:outgoing>Flow_subHireStart</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:serviceTask id="thT_validate" name="Validate hire request">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="validate-hire-request" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_subHireStart</bpmn:incoming>
+        <bpmn:outgoing>SF_0043</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:serviceTask id="thT_checkIMS" name="Check tool availability in IMS">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="check-tool-availability-in-ims" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>SF_0043</bpmn:incoming>
+        <bpmn:outgoing>SF_0044</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:exclusiveGateway id="thG_available" name="Tool available?" gatewayDirection="Diverging">
+        <bpmn:incoming>SF_0044</bpmn:incoming>
+        <bpmn:outgoing>SF_0045</bpmn:outgoing>
+        <bpmn:outgoing>SF_0046</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:serviceTask id="thT_createBooking" name="Create provisional booking">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="create-provisional-booking" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>SF_0045</bpmn:incoming>
+        <bpmn:outgoing>SF_0048</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:serviceTask id="thT_processDeposit" name="Process payment or deposit">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="process-payment-or-deposit" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>SF_0048</bpmn:incoming>
+        <bpmn:outgoing>SF_0049</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:exclusiveGateway id="thG_payOK" name="Payment successful?" gatewayDirection="Diverging">
+        <bpmn:incoming>SF_0049</bpmn:incoming>
+        <bpmn:outgoing>SF_0051</bpmn:outgoing>
+        <bpmn:outgoing>SF_0050</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:serviceTask id="thT_genConfirm" name="Generate booking confirmation">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="generate-booking-confirmation" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>SF_0050</bpmn:incoming>
+        <bpmn:outgoing>Flow_subHireEnd</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sendTask id="thT_sendPayFail" name="Send payment failure message">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="send-payment-failure-message" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>SF_0051</bpmn:incoming>
+        <bpmn:outgoing>SF_0052</bpmn:outgoing>
+      </bpmn:sendTask>
+      <bpmn:endEvent id="thE_payFailEnd" name="Payment failed">
+        <bpmn:incoming>SF_0052</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sendTask id="thT_sendUnavail" name="Send unavailability notice to customer">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="send-unavailability-notice-to-customer" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>SF_0046</bpmn:incoming>
+        <bpmn:outgoing>SF_0047</bpmn:outgoing>
+      </bpmn:sendTask>
+      <bpmn:endEvent id="thE_unavailEnd" name="Tool unavailable">
+        <bpmn:incoming>SF_0047</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:endEvent id="End_BookingConfirmed" name="Booking Confirmed">
+        <bpmn:incoming>Flow_subHireEnd</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_subHireStart" sourceRef="Start_HireBookingSub" targetRef="thT_validate" />
+      <bpmn:sequenceFlow id="Flow_subHireEnd" sourceRef="thT_genConfirm" targetRef="End_BookingConfirmed" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="SF_0042" sourceRef="thS_hireRcvd" targetRef="SubProcess_HireBooking" />
+    <bpmn:sequenceFlow id="SF_0047" sourceRef="thT_sendUnavail" targetRef="thE_unavailEnd" />
+    <bpmn:sequenceFlow id="SF_0046" name="no" sourceRef="thG_available" targetRef="thT_sendUnavail">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=no</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0041" sourceRef="rsT_sendOrderConf" targetRef="rsE_fulfilled" />
+    <bpmn:sequenceFlow id="Flow_1i5pyls" sourceRef="rsT_arrangeDelivery" targetRef="rsT_sendOrderConf" />
+    <bpmn:sequenceFlow id="SF_0077" sourceRef="rsT_arrangeDelivery" targetRef="whT_pickOrder" />
+    <bpmn:sequenceFlow id="SF_0035" sourceRef="rsT_sendPayFail" targetRef="rsE_payFailEnd" />
+    <bpmn:sequenceFlow id="SF_0031" sourceRef="rsT_notifyOOS" targetRef="rsE_oosEnd" />
+    <bpmn:sequenceFlow id="SF_0030" name="no" sourceRef="rsG_stockAvail" targetRef="rsT_notifyOOS">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=no</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0028" sourceRef="rsT_checkStock" targetRef="rsG_stockAvail" />
+    <bpmn:sequenceFlow id="SF_0038" name="delivery" sourceRef="rsG_fulfilment" targetRef="rsT_arrangeDelivery">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=delivery</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0036" sourceRef="rsT_tradeCardPoints" targetRef="rsG_fulfilment" />
+    <bpmn:sequenceFlow id="SF_0092" sourceRef="rsT_tradeCardPoints" targetRef="imsT_stockOnSale" />
+    <bpmn:sequenceFlow id="SF_0034" name="no" sourceRef="rsG_paymentOK" targetRef="rsT_sendPayFail">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=no</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0033" name="yes" sourceRef="rsG_paymentOK" targetRef="rsT_tradeCardPoints">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=yes</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0032" sourceRef="rsT_processPayment" targetRef="rsG_paymentOK" />
+    <bpmn:sequenceFlow id="SF_0029" name="yes" sourceRef="rsG_stockAvail" targetRef="rsT_processPayment">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=yes</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0027" sourceRef="rsS_orderRcvd" targetRef="rsT_checkStock" />
+    <bpmn:sequenceFlow id="SF_0039" sourceRef="rsT_prepCollect" targetRef="rsT_arrangeDelivery" />
+    <bpmn:sequenceFlow id="SF_0037" name="click-and-collect" sourceRef="rsG_fulfilment" targetRef="rsT_prepCollect">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=collect</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_imsRS_1" sourceRef="imsT_stockOnSale" targetRef="imsT_updateOnlineRS" />
+    <bpmn:sequenceFlow id="SF_imsRS_2" sourceRef="imsT_updateOnlineRS" targetRef="imsE_rsUpdated" />
+    <bpmn:sequenceFlow id="SF_imsTH_1" sourceRef="imsT_reserveOnBooking" targetRef="imsT_updateOnlineTH" />
+    <bpmn:sequenceFlow id="SF_imsTH_2" sourceRef="imsT_statusHired" targetRef="imsT_updateOnlineTH" />
+    <bpmn:sequenceFlow id="SF_imsTH_3" sourceRef="imsT_statusReturned" targetRef="imsT_updateOnlineTH" />
+    <bpmn:sequenceFlow id="SF_imsTH_4" sourceRef="imsT_updateOnlineTH" targetRef="imsE_thUpdated" />
+    <bpmn:sequenceFlow id="SF_imsWH_1" sourceRef="imsT_statusInService" targetRef="imsT_updateOnlineWH" />
+    <bpmn:sequenceFlow id="SF_imsWH_2" sourceRef="imsT_statusReadyToHire" targetRef="imsT_updateOnlineWH" />
+    <bpmn:sequenceFlow id="SF_imsWH_3" sourceRef="imsT_statusOOS" targetRef="imsT_updateOnlineWH" />
+    <bpmn:sequenceFlow id="SF_imsWH_4" sourceRef="imsT_updateOnlineWH" targetRef="imsE_whUpdated" />
+    <bpmn:sequenceFlow id="SF_0098" sourceRef="imsT_syncFixPro" targetRef="imsT_statusReadyToHire" />
+    <bpmn:sequenceFlow id="SF_0096" sourceRef="whT_moveToServiceBay" targetRef="imsT_statusInService" />
+    <bpmn:boundaryEvent id="thB_depositErr" name="Payment gateway error" attachedToRef="thT_processDeposit">
+      <bpmn:errorEventDefinition id="EED_thB_depositErr" errorRef="Err_deposit" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="fcB_apiErr" name="FinTrust API error" attachedToRef="fcT_sendCreditApp">
+      <bpmn:errorEventDefinition id="EED_fcB_apiErr" errorRef="Err_fintrust_api" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="imsB_imsErr" name="IMS sync error" attachedToRef="imsT_reserveOnBooking">
+      <bpmn:errorEventDefinition id="EED_imsB_imsErr" errorRef="Err_ims" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="rsB_payErr" name="POS technical error" attachedToRef="rsT_processPayment">
+      <bpmn:errorEventDefinition id="EED_rsB_payErr" errorRef="Err_payment" />
+    </bpmn:boundaryEvent>
+    <bpmn:dataObjectReference id="DO_CreditApp_ref" name="Credit Application" dataObjectRef="DO_CreditApp" />
+    <bpmn:dataObject id="DO_CreditApp" />
+    <bpmn:endEvent id="rsE_payErrTech" name="POS technical error — escalate">
+      <bpmn:incoming>SF_err_rsB_payErr</bpmn:incoming>
+      <bpmn:errorEventDefinition id="EED_rsE_payErrTech" errorRef="Err_payment" />
+    </bpmn:endEvent>
+    <bpmn:dataObjectReference id="DO_BookingRecord_ref" name="Booking Record" dataObjectRef="DO_BookingRecord" />
+    <bpmn:dataObject id="DO_BookingRecord" />
+    <bpmn:dataObjectReference id="DO_ServiceReport_ref" name="Service Report" dataObjectRef="DO_ServiceReport" />
+    <bpmn:dataObject id="DO_ServiceReport" />
+    <bpmn:endEvent id="imsE_imsErr" name="IMS sync error — escalate">
+      <bpmn:incoming>SF_err_imsB_imsErr</bpmn:incoming>
+      <bpmn:errorEventDefinition id="EED_imsE_imsErr" errorRef="Err_ims" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="fcE_apiErr" name="FinTrust API error — escalate">
+      <bpmn:incoming>SF_err_fcB_apiErr</bpmn:incoming>
+      <bpmn:errorEventDefinition id="EED_fcE_apiErr" errorRef="Err_fintrust_api" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="thE_depositErr" name="Payment gateway error — escalate">
+      <bpmn:incoming>SF_err_thB_depositErr</bpmn:incoming>
+      <bpmn:errorEventDefinition id="EED_thE_depositErr" errorRef="Err_deposit" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="logE_delivered" name="Delivery complete">
+      <bpmn:incoming>SF_0110</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:manualTask id="logT_confirm" name="Confirm delivery receipt">
+      <bpmn:incoming>SF_0109</bpmn:incoming>
+      <bpmn:outgoing>SF_0110</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="logT_deliver" name="Deliver order to customer address">
+      <bpmn:incoming>SF_0108</bpmn:incoming>
+      <bpmn:outgoing>SF_0109</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="logT_assignVan" name="Assign van and driver from fleet">
+      <bpmn:incoming>SF_0107</bpmn:incoming>
+      <bpmn:outgoing>SF_0108</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:startEvent id="logS_delOrderRcvd" name="Delivery order received from warehouse">
+      <bpmn:outgoing>SF_0107</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MED_logS_delOrderRcvd" messageRef="Msg_delivery-order-received-from-warehouse" />
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="imsT_statusReturned" name="Update tool status — Returned / In Inspection">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="update-tool-status-returned-in-inspection" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0095</bpmn:incoming>
+      <bpmn:outgoing>SF_imsTH_3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="imsT_statusHired" name="Update tool status — Hired">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="update-tool-status-hired" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0094</bpmn:incoming>
+      <bpmn:outgoing>SF_imsTH_2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="imsT_statusReadyToHire" name="Update tool status — Ready to Hire">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="update-tool-status-ready-to-hire" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0098</bpmn:incoming>
+      <bpmn:outgoing>SF_imsWH_2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="imsT_statusOOS" name="Update tool status — Out of Service">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="update-tool-status-out-of-service" />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SF_imsWH_3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="imsT_updateOnlineRS" name="Update online stock display (Retail)">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="update-online-stock-display-retail" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_imsRS_1</bpmn:incoming>
+      <bpmn:outgoing>SF_imsRS_2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="imsT_updateOnlineTH" name="Update online hire availability (Tool Hire)">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="update-online-hire-availability-th" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_imsTH_1</bpmn:incoming>
+      <bpmn:incoming>SF_imsTH_2</bpmn:incoming>
+      <bpmn:incoming>SF_imsTH_3</bpmn:incoming>
+      <bpmn:outgoing>SF_imsTH_4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="imsT_updateOnlineWH" name="Update online inventory status (Warehouse)">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="update-online-inventory-status-wh" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_imsWH_1</bpmn:incoming>
+      <bpmn:incoming>SF_imsWH_2</bpmn:incoming>
+      <bpmn:incoming>SF_imsWH_3</bpmn:incoming>
+      <bpmn:outgoing>SF_imsWH_4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="imsE_rsUpdated" name="Online stock display updated">
+      <bpmn:incoming>SF_imsRS_2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="imsE_thUpdated" name="Online hire display updated">
+      <bpmn:incoming>SF_imsTH_4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="imsE_whUpdated" name="Online inventory status updated">
+      <bpmn:incoming>SF_imsWH_4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="imsT_stockOnSale" name="Deduct stock on sale (POS sync)">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="deduct-stock-on-sale-pos-sync" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0092</bpmn:incoming>
+      <bpmn:outgoing>SF_imsRS_1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="imsT_reserveOnBooking" name="Reserve tool stock on confirmed booking">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="reserve-tool-stock-on-confirmed-booking" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0093</bpmn:incoming>
+      <bpmn:outgoing>SF_imsTH_1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:businessRuleTask id="fcT_validateTC" name="Evaluate Trade Card eligibility (DMN)">
+      <bpmn:extensionElements>
+        <zeebe:calledDecision decisionId="tradeCardEligibility" resultVariable="eligibilityResult" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0079</bpmn:incoming>
+      <bpmn:outgoing>SF_0080</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:startEvent id="fcS_finRcvd" name="Finance opt-in received from customer">
+      <bpmn:outgoing>SF_0079</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MED_fcS_finRcvd" messageRef="Msg_finance-opt-in-received-from-customer" />
+    </bpmn:startEvent>
+    <bpmn:endEvent id="fcE_notEligible" name="Not eligible for finance">
+      <bpmn:incoming>SF_0082</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="fcE_declined" name="Finance declined — notify customer">
+      <bpmn:incoming>SF_0086</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="fcG_ftApproved" name="FinTrust approved?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0084</bpmn:incoming>
+      <bpmn:outgoing>SF_0086</bpmn:outgoing>
+      <bpmn:outgoing>SF_0085</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:receiveTask id="fcT_rcvFTDecision" name="Receive approval or rejection from FinTrust" messageRef="Msg_receive-approval-or-rejection-from-fintrust">
+      <bpmn:incoming>SF_0083</bpmn:incoming>
+      <bpmn:outgoing>SF_0084</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:endEvent id="fcE_complete" name="Finance transaction complete">
+      <bpmn:incoming>SF_0091</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="fcT_applyDiscount" name="Apply discount band (up to 10%)">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="apply-discount-band-up-to-10" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0090</bpmn:incoming>
+      <bpmn:outgoing>SF_0091</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="fcT_accruePoints" name="Accrue loyalty points on Trade Card">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="accrue-loyalty-points-on-trade-card" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0089</bpmn:incoming>
+      <bpmn:outgoing>SF_0090</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="fcT_recordTx" name="Record transaction — goods released to customer">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="record-transaction-goods-released-to-customer" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0088</bpmn:incoming>
+      <bpmn:outgoing>SF_0089</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:receiveTask id="fcT_rcvFTPayment" name="Receive full payment from FinTrust UK" messageRef="Msg_receive-full-payment-from-fintrust-uk">
+      <bpmn:incoming>SF_0087</bpmn:incoming>
+      <bpmn:outgoing>SF_0088</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:sendTask id="fcT_sendApprovalToCust" name="Send approval confirmation to customer">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send-approval-confirmation-to-customer" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0085</bpmn:incoming>
+      <bpmn:outgoing>SF_0087</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sendTask id="fcT_sendCreditApp" name="Send real-time credit application to FinTrust UK">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send-real-time-credit-application-to-fintrust-uk" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0081</bpmn:incoming>
+      <bpmn:outgoing>SF_0083</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:exclusiveGateway id="fcG_eligible" name="Valid Trade Card and purchase ≥ £100?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0080</bpmn:incoming>
+      <bpmn:outgoing>SF_0082</bpmn:outgoing>
+      <bpmn:outgoing>SF_0081</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="whE_toolReady" name="Tool ready for hire">
+      <bpmn:incoming>Flow_1hd09jj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:manualTask id="whT_relocate" name="Relocate tool to Ready-to-Hire area">
+      <bpmn:incoming>Flow_0s4vq0w</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hd09jj</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="whT_rescan" name="Re-scan serviced tool into IMS">
+      <bpmn:incoming>SF_0097</bpmn:incoming>
+      <bpmn:outgoing>Flow_0s4vq0w</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:receiveTask id="whT_rcvServiced" name="Receive serviced tools back from FixPro" messageRef="Msg_receive-serviced-tools-back-from-fixpro">
+      <bpmn:incoming>SF_0073</bpmn:incoming>
+      <bpmn:outgoing>SF_0097</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:manualTask id="whT_prepHandover" name="Prepare digital handover checklist for FixPro">
+      <bpmn:incoming>SF_0072</bpmn:incoming>
+      <bpmn:outgoing>SF_0073</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="whT_moveToServiceBay" name="Move returned tool to service bay">
+      <bpmn:incoming>SF_0071</bpmn:incoming>
+      <bpmn:outgoing>SF_0072</bpmn:outgoing>
+      <bpmn:outgoing>SF_0096</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:endEvent id="whE_stockUpdated" name="Stock levels updated">
+      <bpmn:incoming>SF_0070</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:manualTask id="whT_weeklyCycle" name="Perform weekly cycle count">
+      <bpmn:incoming>SF_0069</bpmn:incoming>
+      <bpmn:outgoing>SF_0070</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="whT_dailyCheck" name="Perform daily stock check">
+      <bpmn:incoming>SF_0068</bpmn:incoming>
+      <bpmn:outgoing>SF_0069</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="whT_scanBin" name="Scan and bin stock into IMS">
+      <bpmn:incoming>SF_0067</bpmn:incoming>
+      <bpmn:outgoing>SF_0068</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="whT_receiveGoods" name="Receive goods-in from supplier">
+      <bpmn:incoming>SF_0066</bpmn:incoming>
+      <bpmn:outgoing>SF_0067</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:startEvent id="whS_supplierDel" name="Supplier delivery arrives">
+      <bpmn:outgoing>SF_0066</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="whE_orderPicked" name="Order picked and ready">
+      <bpmn:incoming>SF_0078</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:manualTask id="whT_pickOrder" name="Pick and pack order for fulfilment">
+      <bpmn:incoming>SF_0077</bpmn:incoming>
+      <bpmn:outgoing>SF_0078</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:exclusiveGateway id="thG_maintRequired" name="Maintenance required?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0058</bpmn:incoming>
+      <bpmn:outgoing>SF_0059</bpmn:outgoing>
+      <bpmn:outgoing>SF_0061</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:manualTask id="thT_inspectTool" name="Inspect returned tool">
+      <bpmn:incoming>SF_0057</bpmn:incoming>
+      <bpmn:outgoing>SF_0058</bpmn:outgoing>
+      <bpmn:outgoing>SF_0095</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:receiveTask id="thT_rcvReturn" name="Receive returned tool from customer" messageRef="Msg_receive-returned-tool-from-customer">
+      <bpmn:incoming>SF_0056</bpmn:incoming>
+      <bpmn:outgoing>SF_0057</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:manualTask id="thT_conditionLog" name="Record pre-hire condition log">
+      <bpmn:incoming>SF_0055</bpmn:incoming>
+      <bpmn:outgoing>SF_0056</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="thT_issueTool" name="Issue tool to customer with return date">
+      <bpmn:incoming>SF_0054</bpmn:incoming>
+      <bpmn:outgoing>SF_0055</bpmn:outgoing>
+      <bpmn:outgoing>SF_0094</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sendTask id="thT_sendConfirm" name="Send booking confirmation to customer">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send-booking-confirmation-to-customer" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0053</bpmn:incoming>
+      <bpmn:outgoing>SF_0054</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:exclusiveGateway id="thG_repairApproved" name="Repair approved?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0063</bpmn:incoming>
+      <bpmn:outgoing>SF_0065</bpmn:outgoing>
+      <bpmn:outgoing>SF_0064</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="thT_sendRejection" name="Send repair rejection to FixPro">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send-repair-rejection-to-fixpro" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0065</bpmn:incoming>
+    </bpmn:sendTask>
+    <bpmn:userTask id="thT_approveRepair" name="Approve major repair request from FixPro">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="approve-repair-request" bindingType="deployment" />
+        <zeebe:assignmentDefinition assignee="demo" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0062</bpmn:incoming>
+      <bpmn:outgoing>SF_0063</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="thE_hireEnd" name="Hire cycle complete">
+      <bpmn:incoming>SF_0060</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="thT_updateReadyDirect" name="Update tool status to ready-to-hire">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="update-tool-status-ready-to-hire" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;inspection&#34;" target="source" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0059</bpmn:incoming>
+      <bpmn:outgoing>SF_0060</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:manualTask id="thT_tagMaint" name="Tag and log tool for maintenance">
+      <bpmn:incoming>SF_0061</bpmn:incoming>
+      <bpmn:outgoing>SF_0062</bpmn:outgoing>
+      <bpmn:outgoing>SF_0071</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sendTask id="thT_sendApproval" name="Send repair approval to FixPro">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send-repair-approval-to-fixpro" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0064</bpmn:incoming>
+    </bpmn:sendTask>
+    <bpmn:startEvent id="thS_hireRcvd" name="Hire request received">
+      <bpmn:outgoing>SF_0042</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MED_thS_hireRcvd" messageRef="Msg_hire-request-received" />
+    </bpmn:startEvent>
+    <bpmn:endEvent id="rsE_fulfilled" name="Order fulfilled">
+      <bpmn:incoming>SF_0041</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="rsT_sendOrderConf" name="Send order confirmation">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send-order-confirmation" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1i5pyls</bpmn:incoming>
+      <bpmn:outgoing>SF_0041</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sendTask id="rsT_sendPayFail" name="Send payment failure notice">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send-payment-failure-notice" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0034</bpmn:incoming>
+      <bpmn:outgoing>SF_0035</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:manualTask id="rsT_arrangeDelivery" name="Send to logistics for van delivery">
+      <bpmn:incoming>SF_0038</bpmn:incoming>
+      <bpmn:incoming>SF_0039</bpmn:incoming>
+      <bpmn:outgoing>SF_0077</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1i5pyls</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:endEvent id="rsE_payFailEnd" name="Payment failed">
+      <bpmn:incoming>SF_0035</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="rsE_oosEnd" name="Order cancelled">
+      <bpmn:incoming>SF_0031</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="rsT_notifyOOS" name="Notify customer — out of stock">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="notify-customer-out-of-stock" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0030</bpmn:incoming>
+      <bpmn:outgoing>SF_0031</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:exclusiveGateway id="rsG_stockAvail" name="Stock available?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0028</bpmn:incoming>
+      <bpmn:outgoing>SF_0030</bpmn:outgoing>
+      <bpmn:outgoing>SF_0029</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="rsT_checkStock" name="Check stock availability in IMS">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="check-stock-availability-in-ims" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0027</bpmn:incoming>
+      <bpmn:outgoing>SF_0028</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="rsG_fulfilment" name="Delivery or click-and-collect?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0036</bpmn:incoming>
+      <bpmn:outgoing>SF_0038</bpmn:outgoing>
+      <bpmn:outgoing>SF_0037</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="rsT_tradeCardPoints" name="Apply Trade Card loyalty points">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="apply-trade-card-loyalty-points" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0033</bpmn:incoming>
+      <bpmn:outgoing>SF_0036</bpmn:outgoing>
+      <bpmn:outgoing>SF_0092</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="rsG_paymentOK" name="Payment successful?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0032</bpmn:incoming>
+      <bpmn:outgoing>SF_0034</bpmn:outgoing>
+      <bpmn:outgoing>SF_0033</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="rsT_processPayment" name="Process payment (cash / card)">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="process-payment-cash-card" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0029</bpmn:incoming>
+      <bpmn:outgoing>SF_0032</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:startEvent id="rsS_orderRcvd" name="Order received from customer">
+      <bpmn:outgoing>SF_0027</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MED_rsS_orderRcvd" messageRef="Msg_order-received-from-customer" />
+    </bpmn:startEvent>
+    <bpmn:manualTask id="rsT_prepCollect" name="Prepare order for click-and-collect">
+      <bpmn:incoming>SF_0037</bpmn:incoming>
+      <bpmn:outgoing>SF_0039</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:serviceTask id="imsT_syncFixPro" name="Sync FixPro service records via API">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="sync-fixpro-service-records-via-api" />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SF_0098</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="imsT_statusInService" name="Update tool status — In Service (FixPro)">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="update-tool-status-in-service-fixpro" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0096</bpmn:incoming>
+      <bpmn:outgoing>SF_imsWH_1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:textAnnotation id="SLA_08">
+      <bpmn:text>SLA: booking confirmation within 2 min of payment success</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TA_04">
+      <bpmn:text>Routine rule: any tool with &gt; 20 hire hours OR visible wear is routed to FixPro</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="TA_assoc_04" sourceRef="thG_maintRequired" targetRef="TA_04" />
+    <bpmn:association id="SLA_assoc_08" sourceRef="thT_sendConfirm" targetRef="SLA_08" />
+  </bpmn:process>
+  <bpmn:process id="Proc_FixPro" name="FixPro Ltd" isExecutable="false">
+    <bpmn:startEvent id="fpS_timer" name="Tuesday AM — weekly collection schedule">
+      <bpmn:outgoing>SF_0111</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TED_fpS_timer">
+        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">0 8 * * 2</bpmn:timeCycle>
+      </bpmn:timerEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:manualTask id="fpT_collect" name="Collect tools from ProBuild service bay">
+      <bpmn:incoming>SF_0111</bpmn:incoming>
+      <bpmn:outgoing>SF_0112</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="fpT_inspect" name="Perform inspection and diagnostic">
+      <bpmn:incoming>SF_0112</bpmn:incoming>
+      <bpmn:outgoing>SF_0113</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:serviceTask id="fpT_classify" name="Classify service type">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="classify-service-type" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0113</bpmn:incoming>
+      <bpmn:outgoing>SF_0114</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="fpG_serviceClass" name="Service classification?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0114</bpmn:incoming>
+      <bpmn:outgoing>SF_0115</bpmn:outgoing>
+      <bpmn:outgoing>SF_0116</bpmn:outgoing>
+      <bpmn:outgoing>SF_0117</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:manualTask id="fpT_routineMaint" name="Carry out routine maintenance">
+      <bpmn:incoming>SF_0115</bpmn:incoming>
+      <bpmn:outgoing>SF_0118</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="fpT_assessCost" name="Assess repair cost">
+      <bpmn:incoming>SF_0116</bpmn:incoming>
+      <bpmn:outgoing>SF_0119</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sendTask id="fpT_reqAuth" name="Request major repair authorisation from ProBuild">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="request-major-repair-authorisation-from-probuild" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0121</bpmn:incoming>
+      <bpmn:outgoing>SF_0122</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:receiveTask id="fpT_rcvRepairDec" name="Receive repair decision from ProBuild" messageRef="Msg_receive-repair-decision-from-probuild">
+      <bpmn:incoming>SF_0122</bpmn:incoming>
+      <bpmn:outgoing>SF_0123</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:exclusiveGateway id="fpG_authApproved" name="Authorisation approved?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0123</bpmn:incoming>
+      <bpmn:outgoing>SF_0124</bpmn:outgoing>
+      <bpmn:outgoing>SF_0125</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:manualTask id="fpT_markOOS_comp" name="Mark tool out-of-service (compliance fail)">
+      <bpmn:incoming>SF_0129</bpmn:incoming>
+      <bpmn:outgoing>SF_0133</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sendTask id="fpT_uploadExc_comp" name="Upload exceptions report">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="upload-exceptions-report" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0133</bpmn:incoming>
+      <bpmn:outgoing>SF_0134</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:manualTask id="fpT_retStatus_comp" name="Return tool status to ProBuild">
+      <bpmn:incoming>SF_0134</bpmn:incoming>
+      <bpmn:outgoing>SF_0135</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:endEvent id="fpE_compFail" name="Tool decommissioned — compliance fail">
+      <bpmn:incoming>SF_0135</bpmn:incoming>
+      <bpmn:incoming>SF_0136</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:manualTask id="fpT_markOOS_direct" name="Mark tool out-of-service (beyond repair)">
+      <bpmn:incoming>SF_0117</bpmn:incoming>
+      <bpmn:outgoing>SF_0137</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sendTask id="fpT_uploadExc_direct" name="Upload exceptions report">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="upload-exceptions-report" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0137</bpmn:incoming>
+      <bpmn:outgoing>SF_0138</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:manualTask id="fpT_retStatus_direct" name="Return tool status to ProBuild">
+      <bpmn:incoming>SF_0138</bpmn:incoming>
+      <bpmn:outgoing>SF_0139</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:endEvent id="fpE_oosEnd" name="Tool flagged for decommission">
+      <bpmn:incoming>SF_0139</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:manualTask id="fpT_markOOS_auth" name="Mark tool out-of-service (auth declined)">
+      <bpmn:incoming>SF_0125</bpmn:incoming>
+      <bpmn:outgoing>SF_0136</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:manualTask id="fpT_carryRepair" name="Carry out repair">
+      <bpmn:incoming>SF_0124</bpmn:incoming>
+      <bpmn:incoming>SF_0120</bpmn:incoming>
+      <bpmn:outgoing>SF_0126</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:endEvent id="fpE_serviceEnd" name="Service cycle complete">
+      <bpmn:incoming>SF_0132</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:manualTask id="fpT_returnTools" name="Return serviced tools to ProBuild">
+      <bpmn:incoming>SF_0131</bpmn:incoming>
+      <bpmn:outgoing>SF_0132</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:userTask id="fpT_uploadReport" name="Upload service report and invoice to client portal">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="fixpro-service-report" bindingType="deployment" />
+        <zeebe:assignmentDefinition assignee="demo" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0130</bpmn:incoming>
+      <bpmn:outgoing>SF_0131</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="fpT_applyLabel" name="Apply service label (date, tech ID, next service)">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:assignmentDefinition assignee="demo" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0128</bpmn:incoming>
+      <bpmn:outgoing>SF_0130</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="fpG_compliance" name="Passed compliance?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0127</bpmn:incoming>
+      <bpmn:outgoing>SF_0129</bpmn:outgoing>
+      <bpmn:outgoing>SF_0128</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="fpT_PAT" name="Perform PAT and compliance checks">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:assignmentDefinition assignee="demo" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0126</bpmn:incoming>
+      <bpmn:incoming>Flow_00j2alb</bpmn:incoming>
+      <bpmn:outgoing>SF_0127</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="fpG_costOver50" name="Repair cost over £50?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0119</bpmn:incoming>
+      <bpmn:incoming>SF_0118</bpmn:incoming>
+      <bpmn:outgoing>SF_0121</bpmn:outgoing>
+      <bpmn:outgoing>SF_0120</bpmn:outgoing>
+      <bpmn:outgoing>Flow_00j2alb</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SF_0111" sourceRef="fpS_timer" targetRef="fpT_collect" />
+    <bpmn:sequenceFlow id="SF_0112" sourceRef="fpT_collect" targetRef="fpT_inspect" />
+    <bpmn:sequenceFlow id="SF_0113" sourceRef="fpT_inspect" targetRef="fpT_classify" />
+    <bpmn:sequenceFlow id="SF_0114" sourceRef="fpT_classify" targetRef="fpG_serviceClass" />
+    <bpmn:sequenceFlow id="SF_0115" name="routine maintenance" sourceRef="fpG_serviceClass" targetRef="fpT_routineMaint">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=routine</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0116" name="repair" sourceRef="fpG_serviceClass" targetRef="fpT_assessCost">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=repair</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0117" name="out-of-service" sourceRef="fpG_serviceClass" targetRef="fpT_markOOS_direct">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=oos</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0118" sourceRef="fpT_routineMaint" targetRef="fpG_costOver50" />
+    <bpmn:sequenceFlow id="SF_0119" sourceRef="fpT_assessCost" targetRef="fpG_costOver50" />
+    <bpmn:sequenceFlow id="SF_0121" name="over £50 — authorisation required" sourceRef="fpG_costOver50" targetRef="fpT_reqAuth">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=over50</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0122" sourceRef="fpT_reqAuth" targetRef="fpT_rcvRepairDec" />
+    <bpmn:sequenceFlow id="SF_0123" sourceRef="fpT_rcvRepairDec" targetRef="fpG_authApproved" />
+    <bpmn:sequenceFlow id="SF_0124" name="approved" sourceRef="fpG_authApproved" targetRef="fpT_carryRepair">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=approved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0125" name="declined" sourceRef="fpG_authApproved" targetRef="fpT_markOOS_auth">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=declined</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0129" name="failed" sourceRef="fpG_compliance" targetRef="fpT_markOOS_comp">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=failed</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0133" sourceRef="fpT_markOOS_comp" targetRef="fpT_uploadExc_comp" />
+    <bpmn:sequenceFlow id="SF_0134" sourceRef="fpT_uploadExc_comp" targetRef="fpT_retStatus_comp" />
+    <bpmn:sequenceFlow id="SF_0135" sourceRef="fpT_retStatus_comp" targetRef="fpE_compFail" />
+    <bpmn:sequenceFlow id="SF_0136" sourceRef="fpT_markOOS_auth" targetRef="fpE_compFail" />
+    <bpmn:sequenceFlow id="SF_0137" sourceRef="fpT_markOOS_direct" targetRef="fpT_uploadExc_direct" />
+    <bpmn:sequenceFlow id="SF_0138" sourceRef="fpT_uploadExc_direct" targetRef="fpT_retStatus_direct" />
+    <bpmn:sequenceFlow id="SF_0139" sourceRef="fpT_retStatus_direct" targetRef="fpE_oosEnd" />
+    <bpmn:sequenceFlow id="SF_0120" name="under £50" sourceRef="fpG_costOver50" targetRef="fpT_carryRepair">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=under50</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0126" sourceRef="fpT_carryRepair" targetRef="fpT_PAT" />
+    <bpmn:sequenceFlow id="SF_0132" sourceRef="fpT_returnTools" targetRef="fpE_serviceEnd" />
+    <bpmn:sequenceFlow id="SF_0131" sourceRef="fpT_uploadReport" targetRef="fpT_returnTools" />
+    <bpmn:sequenceFlow id="SF_0130" sourceRef="fpT_applyLabel" targetRef="fpT_uploadReport" />
+    <bpmn:sequenceFlow id="SF_0128" name="passed" sourceRef="fpG_compliance" targetRef="fpT_applyLabel">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=passed</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0127" sourceRef="fpT_PAT" targetRef="fpG_compliance" />
+    <bpmn:sequenceFlow id="Flow_00j2alb" sourceRef="fpG_costOver50" targetRef="fpT_PAT" />
+    <bpmn:boundaryEvent id="fpB_transitErr" name="Tool damaged in transit" attachedToRef="fpT_returnTools">
+      <bpmn:errorEventDefinition id="EED_fpB_transitErr" errorRef="Err_transit" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="fpE_transitErr" name="Tool damaged in transit — escalate">
+      <bpmn:incoming>SF_err_fpB_transitErr</bpmn:incoming>
+      <bpmn:errorEventDefinition id="EED_fpE_transitErr" errorRef="Err_transit" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SF_err_fpB_transitErr" sourceRef="fpB_transitErr" targetRef="fpE_transitErr" />
+  </bpmn:process>
+  <bpmn:process id="Proc_FinTrust" name="FinTrust UK" isExecutable="false">
+    <bpmn:startEvent id="ftS_finReceived" name="Finance Request Received">
+      <bpmn:outgoing>SF_ftStart</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SF_ftStart" sourceRef="ftS_finReceived" targetRef="ftT_rcvCreditApp" />
+    <bpmn:receiveTask id="ftT_rcvCreditApp" name="Receive credit application from ProBuild" messageRef="Msg_receive-credit-application-from-probuild">
+      <bpmn:incoming>SF_ftStart</bpmn:incoming>
+      <bpmn:outgoing>SF_0140</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:serviceTask id="ftT_runCreditCheck" name="Run real-time credit check on customer">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="run-real-time-credit-check-on-customer" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0140</bpmn:incoming>
+      <bpmn:outgoing>SF_0141</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="ftG_creditApproved" name="Credit approved?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0141</bpmn:incoming>
+      <bpmn:outgoing>SF_0142</bpmn:outgoing>
+      <bpmn:outgoing>SF_0143</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1kbgjx7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sendTask id="ftT_sendDecision" name="Send approval or rejection to ProBuild">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send-approval-or-rejection-to-probuild" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0142</bpmn:incoming>
+      <bpmn:incoming>SF_0143</bpmn:incoming>
+      <bpmn:outgoing>SF_0144</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:exclusiveGateway id="ftG_proceedPayment" name="Was approved?" gatewayDirection="Diverging">
+      <bpmn:incoming>SF_0144</bpmn:incoming>
+      <bpmn:outgoing>SF_0145</bpmn:outgoing>
+      <bpmn:outgoing>SF_0146</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SF_0140" sourceRef="ftT_rcvCreditApp" targetRef="ftT_runCreditCheck" />
+    <bpmn:sequenceFlow id="SF_0141" sourceRef="ftT_runCreditCheck" targetRef="ftG_creditApproved" />
+    <bpmn:sequenceFlow id="SF_0142" name="approved" sourceRef="ftG_creditApproved" targetRef="ftT_sendDecision">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=approved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0143" name="declined" sourceRef="ftG_creditApproved" targetRef="ftT_sendDecision">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=declined</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0144" sourceRef="ftT_sendDecision" targetRef="ftG_proceedPayment" />
+    <bpmn:sequenceFlow id="SF_0145" name="was approved" sourceRef="ftG_proceedPayment" targetRef="ftT_payProBuild">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=approved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0146" name="was declined" sourceRef="ftG_proceedPayment" targetRef="ftE_declined">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=declined</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SF_0147" sourceRef="ftT_payProBuild" targetRef="ftT_rcvRepayment" />
+    <bpmn:sequenceFlow id="SF_0148" sourceRef="ftT_rcvRepayment" targetRef="ftE_fullyRepaid" />
+    <bpmn:task id="Activity_0qsb6lf">
+      <bpmn:incoming>Flow_1kbgjx7</bpmn:incoming>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1kbgjx7" sourceRef="ftG_creditApproved" targetRef="Activity_0qsb6lf" />
+    <bpmn:endEvent id="ftE_declined" name="Application declined">
+      <bpmn:incoming>SF_0146</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="ftE_fullyRepaid" name="Loan fully repaid">
+      <bpmn:incoming>SF_0148</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:receiveTask id="ftT_rcvRepayment" name="Receive monthly repayments from customer (6 or 12 months)" messageRef="Msg_receive-monthly-repayments-from-customer-6-or-12-months">
+      <bpmn:incoming>SF_0147</bpmn:incoming>
+      <bpmn:outgoing>SF_0148</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:serviceTask id="ftT_payProBuild" name="Pay ProBuild full purchase amount upfront">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="pay-probuild-full-purchase-amount-upfront" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SF_0145</bpmn:incoming>
+      <bpmn:outgoing>SF_0147</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collab_ProBuild">
+      <bpmndi:BPMNShape id="Part_Customer_di" bpmnElement="Part_Customer" isHorizontal="true">
+        <dc:Bounds x="530" y="780" width="3400" height="590" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_browse_di" bpmnElement="cT_browse">
+        <dc:Bounds x="646" y="1060" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="646" y="1142" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_placeOrder_di" bpmnElement="cT_placeOrder">
+        <dc:Bounds x="816" y="1060" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="816" y="1142" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cE_finDeclined_di" bpmnElement="cE_finDeclined">
+        <dc:Bounds x="1476" y="1305" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1452" y="1343" width="84" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_checkAvail_di" bpmnElement="cT_checkAvail">
+        <dc:Bounds x="700" y="850" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="700" y="932" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_submitHire_di" bpmnElement="cT_submitHire">
+        <dc:Bounds x="880" y="850" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="880" y="932" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_rcvBookConf_di" bpmnElement="cT_rcvBookConf">
+        <dc:Bounds x="1100" y="850" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1100" y="932" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_useTool_di" bpmnElement="cT_useTool">
+        <dc:Bounds x="1671" y="840" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1671" y="922" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cG_confirmed_di" bpmnElement="cG_confirmed" isMarkerVisible="true">
+        <dc:Bounds x="1256" y="865" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1253" y="828" width="55" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_collectTool_di" bpmnElement="cT_collectTool">
+        <dc:Bounds x="1484" y="850" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1484" y="932" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_takeGoods_di" bpmnElement="cT_takeGoods">
+        <dc:Bounds x="1501" y="1190" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1501" y="1272" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cE_unavailEnd_di" bpmnElement="cE_unavailEnd">
+        <dc:Bounds x="1532" y="952" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1511" y="990" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_rcvUnavail_di" bpmnElement="cT_rcvUnavail">
+        <dc:Bounds x="1340" y="930" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1340" y="1012" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_optInFin_di" bpmnElement="cT_optInFin">
+        <dc:Bounds x="970" y="1190" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="970" y="1272" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cG_tradeCard_di" bpmnElement="cG_tradeCard" isMarkerVisible="true">
+        <dc:Bounds x="1005" y="1075" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="986" y="1025" width="88" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_rcvFinDecision_di" bpmnElement="cT_rcvFinDecision">
+        <dc:Bounds x="1200" y="1190" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1200" y="1272" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cG_finApproved_di" bpmnElement="cG_finApproved" isMarkerVisible="true">
+        <dc:Bounds x="1401" y="1205" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1400" y="1168" width="52" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_monthlyRepay_di" bpmnElement="cT_monthlyRepay">
+        <dc:Bounds x="1671" y="1190" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1671" y="1272" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cE_finPaid_di" bpmnElement="cE_finPaid">
+        <dc:Bounds x="1852" y="1212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1834" y="1250" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cS_start_di" bpmnElement="cS_start">
+        <dc:Bounds x="460" y="959" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="436" y="997" width="85" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cG_buyOrHire_di" bpmnElement="cG_buyOrHire" isMarkerVisible="true">
+        <dc:Bounds x="550" y="952" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="545" y="1005" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_payStd_di" bpmnElement="cT_payStd">
+        <dc:Bounds x="1150" y="1060" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1150" y="1142" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_rcvOrderConf_di" bpmnElement="cT_rcvOrderConf">
+        <dc:Bounds x="1350" y="1060" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1350" y="1142" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cE_retailEnd_di" bpmnElement="cE_retailEnd">
+        <dc:Bounds x="1543" y="1082" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1487" y="1120" width="47" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_rcvPayFail_di" bpmnElement="cT_rcvPayFail">
+        <dc:Bounds x="2090" y="1080" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2090" y="1162" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cE_payFailEnd_di" bpmnElement="cE_payFailEnd">
+        <dc:Bounds x="2242" y="1102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2218" y="1140" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cE_hireEnd_di" bpmnElement="cE_hireEnd">
+        <dc:Bounds x="2122" y="862" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2110" y="900" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cT_returnTool_di" bpmnElement="cT_returnTool">
+        <dc:Bounds x="1950" y="840" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1950" y="922" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="cE_lateFee_di" bpmnElement="cE_lateFee">
+        <dc:Bounds x="1872" y="1007" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1845" y="1041" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0z05dmx_di" bpmnElement="Gateway_0z05dmx" isMarkerVisible="true">
+        <dc:Bounds x="1865" y="855" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SF_startToGw_di" bpmnElement="SF_startToGw">
+        <di:waypoint x="496" y="977" />
+        <di:waypoint x="550" y="977" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0011_di" bpmnElement="SF_0011">
+        <di:waypoint x="575" y="1002" />
+        <di:waypoint x="575" y="1100" />
+        <di:waypoint x="646" y="1100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="580" y="1060" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0012_di" bpmnElement="SF_0012">
+        <di:waypoint x="766" y="1100" />
+        <di:waypoint x="816" y="1100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0013_di" bpmnElement="SF_0013">
+        <di:waypoint x="936" y="1100" />
+        <di:waypoint x="1005" y="1100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0023_di" bpmnElement="SF_0023">
+        <di:waypoint x="1426" y="1255" />
+        <di:waypoint x="1426" y="1323" />
+        <di:waypoint x="1476" y="1323" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1424" y="1293" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0001_di" bpmnElement="SF_0001">
+        <di:waypoint x="575" y="952" />
+        <di:waypoint x="575" y="890" />
+        <di:waypoint x="700" y="890" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="580" y="860" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0002_di" bpmnElement="SF_0002">
+        <di:waypoint x="820" y="890" />
+        <di:waypoint x="880" y="890" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0003_di" bpmnElement="SF_0003">
+        <di:waypoint x="1000" y="890" />
+        <di:waypoint x="1100" y="890" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0004_di" bpmnElement="SF_0004">
+        <di:waypoint x="1220" y="890" />
+        <di:waypoint x="1256" y="890" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0010_di" bpmnElement="SF_0010">
+        <di:waypoint x="2070" y="880" />
+        <di:waypoint x="2122" y="880" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0008_di" bpmnElement="SF_0008">
+        <di:waypoint x="1604" y="890" />
+        <di:waypoint x="1671" y="890" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0005_di" bpmnElement="SF_0005">
+        <di:waypoint x="1306" y="890" />
+        <di:waypoint x="1484" y="890" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1511" y="83" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0006_di" bpmnElement="SF_0006">
+        <di:waypoint x="1281" y="915" />
+        <di:waypoint x="1281" y="970" />
+        <di:waypoint x="1340" y="970" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1482" y="186" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0022_di" bpmnElement="SF_0022">
+        <di:waypoint x="1451" y="1230" />
+        <di:waypoint x="1501" y="1230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1422" y="1213" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0024_di" bpmnElement="SF_0024">
+        <di:waypoint x="1621" y="1230" />
+        <di:waypoint x="1671" y="1230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0007_di" bpmnElement="SF_0007">
+        <di:waypoint x="1460" y="970" />
+        <di:waypoint x="1532" y="970" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0014_di" bpmnElement="SF_0014">
+        <di:waypoint x="1030" y="1125" />
+        <di:waypoint x="1030" y="1190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1035" y="1147" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0020_di" bpmnElement="SF_0020">
+        <di:waypoint x="1090" y="1230" />
+        <di:waypoint x="1200" y="1230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0015_di" bpmnElement="SF_0015">
+        <di:waypoint x="1055" y="1100" />
+        <di:waypoint x="1150" y="1100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1083" y="1068" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0021_di" bpmnElement="SF_0021">
+        <di:waypoint x="1320" y="1230" />
+        <di:waypoint x="1401" y="1230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0025_di" bpmnElement="SF_0025">
+        <di:waypoint x="1791" y="1230" />
+        <di:waypoint x="1852" y="1230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jidb8x_di" bpmnElement="Flow_0jidb8x">
+        <di:waypoint x="1270" y="1100" />
+        <di:waypoint x="1350" y="1100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0019_di" bpmnElement="SF_0019">
+        <di:waypoint x="1470" y="1100" />
+        <di:waypoint x="1543" y="1100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0026_di" bpmnElement="SF_0026">
+        <di:waypoint x="2210" y="1120" />
+        <di:waypoint x="2242" y="1120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bua32t_di" bpmnElement="Flow_0bua32t">
+        <di:waypoint x="1791" y="880" />
+        <di:waypoint x="1865" y="880" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1785" y="862" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08n4r2t_di" bpmnElement="Flow_08n4r2t">
+        <di:waypoint x="1915" y="880" />
+        <di:waypoint x="1950" y="880" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1926" y="862" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a9vnzw_di" bpmnElement="Flow_0a9vnzw">
+        <di:waypoint x="1890" y="905" />
+        <di:waypoint x="1890" y="1007" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1897" y="953" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Part_ProBuild_di" bpmnElement="Part_ProBuild" isHorizontal="true">
+        <dc:Bounds x="330" y="1650" width="4140" height="2078" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_RS_di" bpmnElement="Lane_RS" isHorizontal="true">
+        <dc:Bounds x="360" y="1650" width="4110" height="490" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_TH_di" bpmnElement="Lane_TH" isHorizontal="true">
+        <dc:Bounds x="360" y="2140" width="4110" height="430" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_WH_di" bpmnElement="Lane_WH" isHorizontal="true">
+        <dc:Bounds x="360" y="2570" width="4110" height="330" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_FC_di" bpmnElement="Lane_FC" isHorizontal="true">
+        <dc:Bounds x="360" y="2900" width="4110" height="360" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_LOG_di" bpmnElement="Lane_LOG" isHorizontal="true">
+        <dc:Bounds x="360" y="3260" width="4110" height="468" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_HireBooking_di" bpmnElement="SubProcess_HireBooking" isExpanded="true">
+        <dc:Bounds x="1080" y="2110" width="1134" height="340" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_HireBookingSub_di" bpmnElement="Start_HireBookingSub">
+        <dc:Bounds x="1162" y="2150" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1132" y="2193" width="96" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_validate_di" bpmnElement="thT_validate">
+        <dc:Bounds x="1120" y="2230" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1120" y="2312" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_checkIMS_di" bpmnElement="thT_checkIMS">
+        <dc:Bounds x="1336" y="2230" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1336" y="2312" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thG_available_di" bpmnElement="thG_available" isMarkerVisible="true">
+        <dc:Bounds x="1506" y="2245" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1495" y="2221" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_createBooking_di" bpmnElement="thT_createBooking">
+        <dc:Bounds x="1606" y="2230" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1606" y="2312" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_processDeposit_di" bpmnElement="thT_processDeposit">
+        <dc:Bounds x="1776" y="2230" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1776" y="2312" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thG_payOK_di" bpmnElement="thG_payOK" isMarkerVisible="true">
+        <dc:Bounds x="1955" y="2245" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1951" y="2208" width="58" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_genConfirm_di" bpmnElement="thT_genConfirm">
+        <dc:Bounds x="2046" y="2230" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2046" y="2312" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_sendPayFail_di" bpmnElement="thT_sendPayFail">
+        <dc:Bounds x="2046" y="2350" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2046" y="2432" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thE_payFailEnd_di" bpmnElement="thE_payFailEnd">
+        <dc:Bounds x="2172" y="2372" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2194" y="2410" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_sendUnavail_di" bpmnElement="thT_sendUnavail">
+        <dc:Bounds x="1590" y="2350" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1590" y="2432" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thE_unavailEnd_di" bpmnElement="thE_unavailEnd">
+        <dc:Bounds x="1751" y="2372" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1730" y="2410" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_BookingConfirmed_di" bpmnElement="End_BookingConfirmed">
+        <dc:Bounds x="2172" y="2252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2160" y="2295" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_subHireStart_di" bpmnElement="Flow_subHireStart">
+        <di:waypoint x="1180" y="2186" />
+        <di:waypoint x="1180" y="2230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_subHireEnd_di" bpmnElement="Flow_subHireEnd">
+        <di:waypoint x="2166" y="2270" />
+        <di:waypoint x="2172" y="2270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DO_CreditApp_ref_di" bpmnElement="DO_CreditApp_ref">
+        <dc:Bounds x="1648" y="3103" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1623" y="3153" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsE_payErrTech_di" bpmnElement="rsE_payErrTech">
+        <dc:Bounds x="1933" y="1872" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1910" y="1908" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DO_BookingRecord_ref_di" bpmnElement="DO_BookingRecord_ref">
+        <dc:Bounds x="1712" y="2425" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1691" y="2475" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DO_ServiceReport_ref_di" bpmnElement="DO_ServiceReport_ref">
+        <dc:Bounds x="2653" y="3640" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2635" y="3690" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsE_imsErr_di" bpmnElement="imsE_imsErr">
+        <dc:Bounds x="2810" y="2530" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2975" y="2476" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcE_apiErr_di" bpmnElement="fcE_apiErr">
+        <dc:Bounds x="1875" y="3110" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1850" y="3146" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thE_depositErr_di" bpmnElement="thE_depositErr">
+        <dc:Bounds x="1956" y="2350" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1930" y="2386" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="logE_delivered_di" bpmnElement="logE_delivered">
+        <dc:Bounds x="1371" y="3400" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1345" y="3438" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="logT_confirm_di" bpmnElement="logT_confirm">
+        <dc:Bounds x="1179" y="3378" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1179" y="3460" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="logT_deliver_di" bpmnElement="logT_deliver">
+        <dc:Bounds x="990" y="3378" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="990" y="3460" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="logT_assignVan_di" bpmnElement="logT_assignVan">
+        <dc:Bounds x="805" y="3378" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="805" y="3460" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="logS_delOrderRcvd_di" bpmnElement="logS_delOrderRcvd">
+        <dc:Bounds x="611" y="3400" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="595" y="3438" width="69" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsT_statusReturned_di" bpmnElement="imsT_statusReturned">
+        <dc:Bounds x="1950" y="2475" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1810" y="3662" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsT_statusHired_di" bpmnElement="imsT_statusHired">
+        <dc:Bounds x="2820" y="2475" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1240" y="3622" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsT_statusReadyToHire_di" bpmnElement="imsT_statusReadyToHire">
+        <dc:Bounds x="1740" y="2810" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1740" y="2892" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsT_statusOOS_di" bpmnElement="imsT_statusOOS">
+        <dc:Bounds x="1914" y="2810" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1914" y="2892" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsT_updateOnlineRS_di" bpmnElement="imsT_updateOnlineRS">
+        <dc:Bounds x="1410" y="2050" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1410" y="2132" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsT_updateOnlineTH_di" bpmnElement="imsT_updateOnlineTH">
+        <dc:Bounds x="2300" y="2370" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2300" y="2452" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsT_updateOnlineWH_di" bpmnElement="imsT_updateOnlineWH">
+        <dc:Bounds x="2120" y="2810" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2120" y="2892" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsE_rsUpdated_di" bpmnElement="imsE_rsUpdated">
+        <dc:Bounds x="1592" y="2072" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1568" y="2110" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsE_thUpdated_di" bpmnElement="imsE_thUpdated">
+        <dc:Bounds x="2462" y="2392" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2440" y="2430" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsE_whUpdated_di" bpmnElement="imsE_whUpdated">
+        <dc:Bounds x="2282" y="2832" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2256" y="2870" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsT_stockOnSale_di" bpmnElement="imsT_stockOnSale">
+        <dc:Bounds x="1240" y="2050" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2170" y="3532" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsT_reserveOnBooking_di" bpmnElement="imsT_reserveOnBooking">
+        <dc:Bounds x="2611" y="2475" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2820" y="3452" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcT_validateTC_di" bpmnElement="fcT_validateTC">
+        <dc:Bounds x="1160" y="2990" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1160" y="3072" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcS_finRcvd_di" bpmnElement="fcS_finRcvd">
+        <dc:Bounds x="976" y="3002" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="959" y="3040" width="70" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcE_notEligible_di" bpmnElement="fcE_notEligible">
+        <dc:Bounds x="1722" y="3152" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1705" y="3190" width="71" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcE_declined_di" bpmnElement="fcE_declined">
+        <dc:Bounds x="2052" y="3142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2045" y="3176" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcG_ftApproved_di" bpmnElement="fcG_ftApproved" isMarkerVisible="true">
+        <dc:Bounds x="2045" y="3005" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2044" y="2968" width="52" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcT_rcvFTDecision_di" bpmnElement="fcT_rcvFTDecision">
+        <dc:Bounds x="1880" y="2990" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1880" y="3072" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcE_complete_di" bpmnElement="fcE_complete">
+        <dc:Bounds x="3162" y="3032" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3165" y="2990" width="54" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcT_applyDiscount_di" bpmnElement="fcT_applyDiscount">
+        <dc:Bounds x="2910" y="3010" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2910" y="3092" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcT_accruePoints_di" bpmnElement="fcT_accruePoints">
+        <dc:Bounds x="2726" y="3010" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2726" y="3092" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcT_recordTx_di" bpmnElement="fcT_recordTx">
+        <dc:Bounds x="2520" y="3010" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2520" y="3092" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcT_rcvFTPayment_di" bpmnElement="fcT_rcvFTPayment">
+        <dc:Bounds x="2340" y="3000" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2340" y="3082" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcT_sendApprovalToCust_di" bpmnElement="fcT_sendApprovalToCust">
+        <dc:Bounds x="2170" y="3000" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2170" y="3082" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcT_sendCreditApp_di" bpmnElement="fcT_sendCreditApp">
+        <dc:Bounds x="1695" y="2990" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1695" y="3072" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcG_eligible_di" bpmnElement="fcG_eligible" isMarkerVisible="true">
+        <dc:Bounds x="1506" y="3005" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1491" y="2955" width="82" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="whE_toolReady_di" bpmnElement="whE_toolReady">
+        <dc:Bounds x="2176" y="2712" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2150" y="2750" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="whT_relocate_di" bpmnElement="whT_relocate">
+        <dc:Bounds x="1914" y="2690" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1914" y="2772" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="whT_rescan_di" bpmnElement="whT_rescan">
+        <dc:Bounds x="1740" y="2690" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1740" y="2772" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="whT_rcvServiced_di" bpmnElement="whT_rcvServiced">
+        <dc:Bounds x="1564" y="2690" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1564" y="2772" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="whT_prepHandover_di" bpmnElement="whT_prepHandover">
+        <dc:Bounds x="1384" y="2690" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1384" y="2772" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="whT_moveToServiceBay_di" bpmnElement="whT_moveToServiceBay">
+        <dc:Bounds x="1186" y="2690" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1186" y="2772" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="whE_stockUpdated_di" bpmnElement="whE_stockUpdated">
+        <dc:Bounds x="2012" y="2602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2001" y="2640" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="whT_weeklyCycle_di" bpmnElement="whT_weeklyCycle">
+        <dc:Bounds x="1824" y="2580" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1824" y="2662" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="whT_dailyCheck_di" bpmnElement="whT_dailyCheck">
+        <dc:Bounds x="1640" y="2580" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1640" y="2662" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="whT_scanBin_di" bpmnElement="whT_scanBin">
+        <dc:Bounds x="1415" y="2580" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1415" y="2662" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="whT_receiveGoods_di" bpmnElement="whT_receiveGoods">
+        <dc:Bounds x="1186" y="2580" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1186" y="2662" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="whS_supplierDel_di" bpmnElement="whS_supplierDel">
+        <dc:Bounds x="976" y="2602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="953" y="2640" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="whE_orderPicked_di" bpmnElement="whE_orderPicked">
+        <dc:Bounds x="3352" y="2682" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3328" y="2720" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="whT_pickOrder_di" bpmnElement="whT_pickOrder">
+        <dc:Bounds x="3200" y="2660" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3200" y="2742" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thG_maintRequired_di" bpmnElement="thG_maintRequired" isMarkerVisible="true">
+        <dc:Bounds x="3066" y="2245" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3060" y="2297" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_inspectTool_di" bpmnElement="thT_inspectTool">
+        <dc:Bounds x="2896" y="2230" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2896" y="2312" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_rcvReturn_di" bpmnElement="thT_rcvReturn">
+        <dc:Bounds x="2726" y="2230" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2726" y="2312" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_conditionLog_di" bpmnElement="thT_conditionLog">
+        <dc:Bounds x="2556" y="2230" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2556" y="2312" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_issueTool_di" bpmnElement="thT_issueTool">
+        <dc:Bounds x="2386" y="2230" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2386" y="2312" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_sendConfirm_di" bpmnElement="thT_sendConfirm">
+        <dc:Bounds x="2216" y="2230" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2216" y="2312" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thG_repairApproved_di" bpmnElement="thG_repairApproved" isMarkerVisible="true">
+        <dc:Bounds x="3515" y="2345" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3496" y="2397" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_sendRejection_di" bpmnElement="thT_sendRejection">
+        <dc:Bounds x="3650" y="2320" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3650" y="2402" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_approveRepair_di" bpmnElement="thT_approveRepair">
+        <dc:Bounds x="3360" y="2340" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3360" y="2422" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thE_hireEnd_di" bpmnElement="thE_hireEnd">
+        <dc:Bounds x="3372" y="2222" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3366" y="2260" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_updateReadyDirect_di" bpmnElement="thT_updateReadyDirect">
+        <dc:Bounds x="3200" y="2200" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3200" y="2282" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_tagMaint_di" bpmnElement="thT_tagMaint">
+        <dc:Bounds x="3166" y="2340" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3166" y="2422" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thT_sendApproval_di" bpmnElement="thT_sendApproval">
+        <dc:Bounds x="3650" y="2190" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3650" y="2272" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thS_hireRcvd_di" bpmnElement="thS_hireRcvd">
+        <dc:Bounds x="1032" y="2252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1020" y="2215" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsE_fulfilled_di" bpmnElement="rsE_fulfilled">
+        <dc:Bounds x="2782" y="1792" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2767" y="1768" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsT_sendOrderConf_di" bpmnElement="rsT_sendOrderConf">
+        <dc:Bounds x="2580" y="1770" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2580" y="1852" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsT_sendPayFail_di" bpmnElement="rsT_sendPayFail">
+        <dc:Bounds x="1784" y="1910" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1784" y="1992" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsT_arrangeDelivery_di" bpmnElement="rsT_arrangeDelivery">
+        <dc:Bounds x="2258" y="1770" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2258" y="1852" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsE_payFailEnd_di" bpmnElement="rsE_payFailEnd">
+        <dc:Bounds x="1968" y="2012" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1950" y="2050" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsE_oosEnd_di" bpmnElement="rsE_oosEnd">
+        <dc:Bounds x="1682" y="1922" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1661" y="1960" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsT_notifyOOS_di" bpmnElement="rsT_notifyOOS">
+        <dc:Bounds x="1400" y="1900" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1400" y="1982" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsG_stockAvail_di" bpmnElement="rsG_stockAvail" isMarkerVisible="true">
+        <dc:Bounds x="1435" y="1785" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1420" y="1761" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsT_checkStock_di" bpmnElement="rsT_checkStock">
+        <dc:Bounds x="1260" y="1770" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1260" y="1852" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsG_fulfilment_di" bpmnElement="rsG_fulfilment" isMarkerVisible="true">
+        <dc:Bounds x="2061" y="1785" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2046" y="1748" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsT_tradeCardPoints_di" bpmnElement="rsT_tradeCardPoints">
+        <dc:Bounds x="1891" y="1770" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1891" y="1852" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsG_paymentOK_di" bpmnElement="rsG_paymentOK" isMarkerVisible="true">
+        <dc:Bounds x="1795" y="1785" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1791" y="1748" width="58" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsT_processPayment_di" bpmnElement="rsT_processPayment">
+        <dc:Bounds x="1640" y="1770" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1640" y="1852" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsS_orderRcvd_di" bpmnElement="rsS_orderRcvd">
+        <dc:Bounds x="1172" y="1792" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1153" y="1838" width="73" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsT_prepCollect_di" bpmnElement="rsT_prepCollect">
+        <dc:Bounds x="2126" y="1970" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2126" y="2052" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsT_syncFixPro_di" bpmnElement="imsT_syncFixPro">
+        <dc:Bounds x="1564" y="2810" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1564" y="2892" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsT_statusInService_di" bpmnElement="imsT_statusInService">
+        <dc:Bounds x="1186" y="2810" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1186" y="2892" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SLA_08_di" bpmnElement="SLA_08">
+        <dc:Bounds x="2356" y="2170" width="180" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TA_04_di" bpmnElement="TA_04">
+        <dc:Bounds x="3146" y="2155" width="220" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="rsB_payErr_di" bpmnElement="rsB_payErr">
+        <dc:Bounds x="1742" y="1832" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1788" y="1837" width="70" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="imsB_imsErr_di" bpmnElement="imsB_imsErr">
+        <dc:Bounds x="2713" y="2537" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2904" y="3468" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fcB_apiErr_di" bpmnElement="fcB_apiErr">
+        <dc:Bounds x="1797" y="3052" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1772" y="3088" width="87" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="thB_depositErr_di" bpmnElement="thB_depositErr">
+        <dc:Bounds x="1878" y="2292" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1852" y="2328" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SF_err_rsB_payErr_di" bpmnElement="SF_err_rsB_payErr">
+        <di:waypoint x="1760" y="1868" />
+        <di:waypoint x="1760" y="1891" />
+        <di:waypoint x="1933" y="1890" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_err_imsB_imsErr_di" bpmnElement="SF_err_imsB_imsErr">
+        <di:waypoint x="2749" y="2555" />
+        <di:waypoint x="2810" y="2548" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_err_fcB_apiErr_di" bpmnElement="SF_err_fcB_apiErr">
+        <di:waypoint x="1815" y="3008" />
+        <di:waypoint x="1815" y="3048" />
+        <di:waypoint x="1875" y="3048" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_err_thB_depositErr_di" bpmnElement="SF_err_thB_depositErr">
+        <di:waypoint x="1896" y="2328" />
+        <di:waypoint x="1896" y="2368" />
+        <di:waypoint x="1956" y="2368" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0110_di" bpmnElement="SF_0110">
+        <di:waypoint x="1299" y="3920" />
+        <di:waypoint x="1371" y="3920" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0109_di" bpmnElement="SF_0109">
+        <di:waypoint x="1110" y="3920" />
+        <di:waypoint x="1179" y="3920" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0108_di" bpmnElement="SF_0108">
+        <di:waypoint x="925" y="3920" />
+        <di:waypoint x="990" y="3920" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0107_di" bpmnElement="SF_0107">
+        <di:waypoint x="647" y="3920" />
+        <di:waypoint x="805" y="3920" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0079_di" bpmnElement="SF_0079">
+        <di:waypoint x="1009" y="2950" />
+        <di:waypoint x="1160" y="2950" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0086_di" bpmnElement="SF_0086">
+        <di:waypoint x="2070" y="2975" />
+        <di:waypoint x="2070" y="3062" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2109" y="3023" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0084_di" bpmnElement="SF_0084">
+        <di:waypoint x="2000" y="2950" />
+        <di:waypoint x="2045" y="2950" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0091_di" bpmnElement="SF_0091">
+        <di:waypoint x="3030" y="2970" />
+        <di:waypoint x="3162" y="2970" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0090_di" bpmnElement="SF_0090">
+        <di:waypoint x="2846" y="2970" />
+        <di:waypoint x="2910" y="2970" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0089_di" bpmnElement="SF_0089">
+        <di:waypoint x="2640" y="2970" />
+        <di:waypoint x="2726" y="2970" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0088_di" bpmnElement="SF_0088">
+        <di:waypoint x="2460" y="2970" />
+        <di:waypoint x="2520" y="2970" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0087_di" bpmnElement="SF_0087">
+        <di:waypoint x="2290" y="2960" />
+        <di:waypoint x="2340" y="2960" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0085_di" bpmnElement="SF_0085">
+        <di:waypoint x="2095" y="2950" />
+        <di:waypoint x="2127" y="2950" />
+        <di:waypoint x="2127" y="2960" />
+        <di:waypoint x="2170" y="2960" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2107" y="2933" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0083_di" bpmnElement="SF_0083">
+        <di:waypoint x="1815" y="2950" />
+        <di:waypoint x="1880" y="2950" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0082_di" bpmnElement="SF_0082">
+        <di:waypoint x="1531" y="2975" />
+        <di:waypoint x="1531" y="3090" />
+        <di:waypoint x="1722" y="3090" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1563" y="3073" width="53" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0081_di" bpmnElement="SF_0081">
+        <di:waypoint x="1556" y="2950" />
+        <di:waypoint x="1695" y="2950" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3025" y="2273" width="35" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0080_di" bpmnElement="SF_0080">
+        <di:waypoint x="1280" y="2960" />
+        <di:waypoint x="1393" y="2960" />
+        <di:waypoint x="1393" y="2950" />
+        <di:waypoint x="1506" y="2950" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hd09jj_di" bpmnElement="Flow_1hd09jj">
+        <di:waypoint x="2034" y="2730" />
+        <di:waypoint x="2176" y="2730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s4vq0w_di" bpmnElement="Flow_0s4vq0w">
+        <di:waypoint x="1860" y="2730" />
+        <di:waypoint x="1914" y="2730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0097_di" bpmnElement="SF_0097">
+        <di:waypoint x="1684" y="2730" />
+        <di:waypoint x="1740" y="2730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0073_di" bpmnElement="SF_0073">
+        <di:waypoint x="1504" y="2730" />
+        <di:waypoint x="1564" y="2730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0072_di" bpmnElement="SF_0072">
+        <di:waypoint x="1306" y="2730" />
+        <di:waypoint x="1384" y="2730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0070_di" bpmnElement="SF_0070">
+        <di:waypoint x="1944" y="2620" />
+        <di:waypoint x="2012" y="2620" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0069_di" bpmnElement="SF_0069">
+        <di:waypoint x="1760" y="2620" />
+        <di:waypoint x="1824" y="2620" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0068_di" bpmnElement="SF_0068">
+        <di:waypoint x="1535" y="2620" />
+        <di:waypoint x="1640" y="2620" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0067_di" bpmnElement="SF_0067">
+        <di:waypoint x="1306" y="2620" />
+        <di:waypoint x="1415" y="2620" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0066_di" bpmnElement="SF_0066">
+        <di:waypoint x="1012" y="2620" />
+        <di:waypoint x="1186" y="2620" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0078_di" bpmnElement="SF_0078">
+        <di:waypoint x="3320" y="2700" />
+        <di:waypoint x="3352" y="2700" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0058_di" bpmnElement="SF_0058">
+        <di:waypoint x="3016" y="2260" />
+        <di:waypoint x="3076" y="2260" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0095_di" bpmnElement="SF_0095">
+        <di:waypoint x="2956" y="2310" />
+        <di:waypoint x="2956" y="2400" />
+        <di:waypoint x="2010" y="2400" />
+        <di:waypoint x="2010" y="2475" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0057_di" bpmnElement="SF_0057">
+        <di:waypoint x="2846" y="2270" />
+        <di:waypoint x="2896" y="2270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0056_di" bpmnElement="SF_0056">
+        <di:waypoint x="2676" y="2270" />
+        <di:waypoint x="2726" y="2270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0055_di" bpmnElement="SF_0055">
+        <di:waypoint x="2506" y="2270" />
+        <di:waypoint x="2556" y="2270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0094_di" bpmnElement="SF_0094">
+        <di:waypoint x="2446" y="2310" />
+        <di:waypoint x="2446" y="2400" />
+        <di:waypoint x="2880" y="2400" />
+        <di:waypoint x="2880" y="2475" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0054_di" bpmnElement="SF_0054">
+        <di:waypoint x="2336" y="2270" />
+        <di:waypoint x="2386" y="2270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0053_di" bpmnElement="SF_0053">
+        <di:waypoint x="2214" y="2270" />
+        <di:waypoint x="2216" y="2270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0093_di" bpmnElement="SF_0093">
+        <di:waypoint x="2106" y="2450" />
+        <di:waypoint x="2106" y="2470" />
+        <di:waypoint x="2671" y="2470" />
+        <di:waypoint x="2671" y="2475" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0052_di" bpmnElement="SF_0052">
+        <di:waypoint x="2166" y="2390" />
+        <di:waypoint x="2172" y="2390" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0065_di" bpmnElement="SF_0065">
+        <di:waypoint x="3565" y="2370" />
+        <di:waypoint x="3608" y="2370" />
+        <di:waypoint x="3608" y="2360" />
+        <di:waypoint x="3650" y="2360" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3590" y="2343" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0063_di" bpmnElement="SF_0063">
+        <di:waypoint x="3480" y="2380" />
+        <di:waypoint x="3498" y="2380" />
+        <di:waypoint x="3498" y="2370" />
+        <di:waypoint x="3515" y="2370" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0060_di" bpmnElement="SF_0060">
+        <di:waypoint x="3320" y="2240" />
+        <di:waypoint x="3372" y="2240" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0059_di" bpmnElement="SF_0059">
+        <di:waypoint x="3116" y="2270" />
+        <di:waypoint x="3158" y="2270" />
+        <di:waypoint x="3158" y="2240" />
+        <di:waypoint x="3200" y="2240" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3079" y="2226" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0062_di" bpmnElement="SF_0062">
+        <di:waypoint x="3286" y="2380" />
+        <di:waypoint x="3360" y="2380" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0071_di" bpmnElement="SF_0071">
+        <di:waypoint x="3226" y="2420" />
+        <di:waypoint x="3226" y="2510" />
+        <di:waypoint x="1130" y="2510" />
+        <di:waypoint x="1130" y="2730" />
+        <di:waypoint x="1186" y="2730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0061_di" bpmnElement="SF_0061">
+        <di:waypoint x="3116" y="2270" />
+        <di:waypoint x="3141" y="2270" />
+        <di:waypoint x="3141" y="2380" />
+        <di:waypoint x="3166" y="2380" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3127" y="2306" width="65" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0064_di" bpmnElement="SF_0064">
+        <di:waypoint x="3540" y="2345" />
+        <di:waypoint x="3540" y="2230" />
+        <di:waypoint x="3650" y="2230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2654" y="5086" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0051_di" bpmnElement="SF_0051">
+        <di:waypoint x="1980" y="2295" />
+        <di:waypoint x="1980" y="2390" />
+        <di:waypoint x="2046" y="2390" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2906" y="1038" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0050_di" bpmnElement="SF_0050">
+        <di:waypoint x="2005" y="2270" />
+        <di:waypoint x="2046" y="2270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2011" y="2243" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0049_di" bpmnElement="SF_0049">
+        <di:waypoint x="1896" y="2270" />
+        <di:waypoint x="1955" y="2270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0048_di" bpmnElement="SF_0048">
+        <di:waypoint x="1726" y="2270" />
+        <di:waypoint x="1776" y="2270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0045_di" bpmnElement="SF_0045">
+        <di:waypoint x="1556" y="2270" />
+        <di:waypoint x="1606" y="2270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1581" y="2233" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0044_di" bpmnElement="SF_0044">
+        <di:waypoint x="1456" y="2270" />
+        <di:waypoint x="1506" y="2270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0043_di" bpmnElement="SF_0043">
+        <di:waypoint x="1240" y="2270" />
+        <di:waypoint x="1336" y="2270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0042_di" bpmnElement="SF_0042">
+        <di:waypoint x="1068" y="2270" />
+        <di:waypoint x="1080" y="2270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0047_di" bpmnElement="SF_0047">
+        <di:waypoint x="1710" y="2390" />
+        <di:waypoint x="1751" y="2390" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0046_di" bpmnElement="SF_0046">
+        <di:waypoint x="1531" y="2295" />
+        <di:waypoint x="1531" y="2390" />
+        <di:waypoint x="1590" y="2390" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2457" y="1478" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0041_di" bpmnElement="SF_0041">
+        <di:waypoint x="2700" y="1810" />
+        <di:waypoint x="2782" y="1810" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i5pyls_di" bpmnElement="Flow_1i5pyls">
+        <di:waypoint x="2378" y="1810" />
+        <di:waypoint x="2580" y="1810" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0077_di" bpmnElement="SF_0077">
+        <di:waypoint x="2318" y="1770" />
+        <di:waypoint x="2318" y="1700" />
+        <di:waypoint x="4210" y="1700" />
+        <di:waypoint x="4210" y="2600" />
+        <di:waypoint x="3260" y="2600" />
+        <di:waypoint x="3260" y="2660" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0035_di" bpmnElement="SF_0035">
+        <di:waypoint x="1904" y="1950" />
+        <di:waypoint x="1936" y="1950" />
+        <di:waypoint x="1936" y="2030" />
+        <di:waypoint x="1968" y="2030" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0031_di" bpmnElement="SF_0031">
+        <di:waypoint x="1520" y="1940" />
+        <di:waypoint x="1682" y="1940" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0030_di" bpmnElement="SF_0030">
+        <di:waypoint x="1460" y="1835" />
+        <di:waypoint x="1460" y="1900" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2079" y="1221" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0028_di" bpmnElement="SF_0028">
+        <di:waypoint x="1380" y="1810" />
+        <di:waypoint x="1435" y="1810" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0038_di" bpmnElement="SF_0038">
+        <di:waypoint x="2111" y="1810" />
+        <di:waypoint x="2186" y="1810" />
+        <di:waypoint x="2186" y="1800" />
+        <di:waypoint x="2258" y="1800" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1022" y="1100" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0036_di" bpmnElement="SF_0036">
+        <di:waypoint x="2011" y="1810" />
+        <di:waypoint x="2061" y="1810" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0092_di" bpmnElement="SF_0092">
+        <di:waypoint x="1951" y="1850" />
+        <di:waypoint x="1951" y="1990" />
+        <di:waypoint x="1300" y="1990" />
+        <di:waypoint x="1300" y="2050" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0034_di" bpmnElement="SF_0034">
+        <di:waypoint x="1820" y="1835" />
+        <di:waypoint x="1820" y="1910" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1823" y="1863" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0033_di" bpmnElement="SF_0033">
+        <di:waypoint x="1845" y="1810" />
+        <di:waypoint x="1891" y="1810" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="978" y="2389" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0032_di" bpmnElement="SF_0032">
+        <di:waypoint x="1760" y="1810" />
+        <di:waypoint x="1795" y="1810" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0029_di" bpmnElement="SF_0029">
+        <di:waypoint x="1485" y="1810" />
+        <di:waypoint x="1640" y="1810" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1551" y="1793" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0027_di" bpmnElement="SF_0027">
+        <di:waypoint x="1208" y="1810" />
+        <di:waypoint x="1260" y="1810" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0039_di" bpmnElement="SF_0039">
+        <di:waypoint x="2246" y="2010" />
+        <di:waypoint x="2318" y="2010" />
+        <di:waypoint x="2318" y="1850" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0037_di" bpmnElement="SF_0037">
+        <di:waypoint x="2086" y="1835" />
+        <di:waypoint x="2086" y="2010" />
+        <di:waypoint x="2126" y="2010" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2091" y="1953" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_imsRS_1_di" bpmnElement="SF_imsRS_1">
+        <di:waypoint x="1360" y="2090" />
+        <di:waypoint x="1410" y="2090" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_imsRS_2_di" bpmnElement="SF_imsRS_2">
+        <di:waypoint x="1530" y="2090" />
+        <di:waypoint x="1592" y="2090" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_imsTH_1_di" bpmnElement="SF_imsTH_1">
+        <di:waypoint x="2671" y="2475" />
+        <di:waypoint x="2671" y="2430" />
+        <di:waypoint x="2420" y="2430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_imsTH_2_di" bpmnElement="SF_imsTH_2">
+        <di:waypoint x="2880" y="2475" />
+        <di:waypoint x="2880" y="2410" />
+        <di:waypoint x="2420" y="2410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_imsTH_3_di" bpmnElement="SF_imsTH_3">
+        <di:waypoint x="2010" y="2475" />
+        <di:waypoint x="2010" y="2430" />
+        <di:waypoint x="2300" y="2430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_imsTH_4_di" bpmnElement="SF_imsTH_4">
+        <di:waypoint x="2420" y="2410" />
+        <di:waypoint x="2462" y="2410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_imsWH_1_di" bpmnElement="SF_imsWH_1">
+        <di:waypoint x="1306" y="2850" />
+        <di:waypoint x="2120" y="2850" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_imsWH_2_di" bpmnElement="SF_imsWH_2">
+        <di:waypoint x="1860" y="2850" />
+        <di:waypoint x="2120" y="2850" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_imsWH_3_di" bpmnElement="SF_imsWH_3">
+        <di:waypoint x="2034" y="2850" />
+        <di:waypoint x="2120" y="2850" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_imsWH_4_di" bpmnElement="SF_imsWH_4">
+        <di:waypoint x="2240" y="2850" />
+        <di:waypoint x="2282" y="2850" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0098_di" bpmnElement="SF_0098">
+        <di:waypoint x="1684" y="2850" />
+        <di:waypoint x="1740" y="2850" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0096_di" bpmnElement="SF_0096">
+        <di:waypoint x="1246" y="2770" />
+        <di:waypoint x="1246" y="2810" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="TA_assoc_04_di" bpmnElement="TA_assoc_04">
+        <di:waypoint x="3091" y="2245" />
+        <di:waypoint x="3146" y="2195" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SLA_assoc_08_di" bpmnElement="SLA_assoc_08">
+        <di:waypoint x="2336" y="2230" />
+        <di:waypoint x="2356" y="2195" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Part_FixPro_di" bpmnElement="Part_FixPro" isHorizontal="true">
+        <dc:Bounds x="630" y="4380" width="3400" height="560" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpS_timer_di" bpmnElement="fpS_timer">
+        <dc:Bounds x="830" y="4432" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="807" y="4470" width="82" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_collect_di" bpmnElement="fpT_collect">
+        <dc:Bounds x="916" y="4410" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="916" y="4492" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_inspect_di" bpmnElement="fpT_inspect">
+        <dc:Bounds x="1086" y="4410" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1086" y="4492" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_classify_di" bpmnElement="fpT_classify">
+        <dc:Bounds x="1256" y="4410" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1256" y="4492" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpG_serviceClass_di" bpmnElement="fpG_serviceClass" isMarkerVisible="true">
+        <dc:Bounds x="1426" y="4425" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1417" y="4477" width="69" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_routineMaint_di" bpmnElement="fpT_routineMaint">
+        <dc:Bounds x="1526" y="4440" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1526" y="4522" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_assessCost_di" bpmnElement="fpT_assessCost">
+        <dc:Bounds x="1526" y="4570" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1526" y="4652" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_reqAuth_di" bpmnElement="fpT_reqAuth">
+        <dc:Bounds x="1721" y="4690" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1721" y="4772" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_rcvRepairDec_di" bpmnElement="fpT_rcvRepairDec">
+        <dc:Bounds x="1891" y="4690" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1891" y="4772" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpG_authApproved_di" bpmnElement="fpG_authApproved" isMarkerVisible="true">
+        <dc:Bounds x="2061" y="4705" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2054" y="4668" width="64" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_markOOS_comp_di" bpmnElement="fpT_markOOS_comp">
+        <dc:Bounds x="2286" y="4690" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2286" y="4772" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_uploadExc_comp_di" bpmnElement="fpT_uploadExc_comp">
+        <dc:Bounds x="2456" y="4690" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2456" y="4772" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_retStatus_comp_di" bpmnElement="fpT_retStatus_comp">
+        <dc:Bounds x="2626" y="4690" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2626" y="4772" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpE_compFail_di" bpmnElement="fpE_compFail">
+        <dc:Bounds x="2796" y="4712" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2816" y="4662" width="87" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_markOOS_direct_di" bpmnElement="fpT_markOOS_direct">
+        <dc:Bounds x="1526" y="4780" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1526" y="4862" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_uploadExc_direct_di" bpmnElement="fpT_uploadExc_direct">
+        <dc:Bounds x="1696" y="4780" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1696" y="4862" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_retStatus_direct_di" bpmnElement="fpT_retStatus_direct">
+        <dc:Bounds x="1866" y="4780" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1866" y="4862" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpE_oosEnd_di" bpmnElement="fpE_oosEnd">
+        <dc:Bounds x="2036" y="4802" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2016" y="4840" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_markOOS_auth_di" bpmnElement="fpT_markOOS_auth">
+        <dc:Bounds x="2161" y="4800" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2161" y="4882" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_carryRepair_di" bpmnElement="fpT_carryRepair">
+        <dc:Bounds x="1838" y="4490" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1838" y="4572" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpE_serviceEnd_di" bpmnElement="fpE_serviceEnd">
+        <dc:Bounds x="2822" y="4542" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2808" y="4580" width="65" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_returnTools_di" bpmnElement="fpT_returnTools">
+        <dc:Bounds x="2626" y="4520" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2626" y="4602" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_uploadReport_di" bpmnElement="fpT_uploadReport">
+        <dc:Bounds x="2456" y="4520" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2456" y="4602" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_applyLabel_di" bpmnElement="fpT_applyLabel">
+        <dc:Bounds x="2286" y="4520" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2286" y="4602" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpG_compliance_di" bpmnElement="fpG_compliance" isMarkerVisible="true">
+        <dc:Bounds x="2186" y="4535" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2180" y="4498" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpT_PAT_di" bpmnElement="fpT_PAT">
+        <dc:Bounds x="2016" y="4490" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2016" y="4572" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpG_costOver50_di" bpmnElement="fpG_costOver50" isMarkerVisible="true">
+        <dc:Bounds x="1695" y="4585" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1679" y="4645" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpE_transitErr_di" bpmnElement="fpE_transitErr">
+        <dc:Bounds x="2806" y="4640" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2665" y="4646" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="fpB_transitErr_di" bpmnElement="fpB_transitErr">
+        <dc:Bounds x="2728" y="4582" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SF_0111_di" bpmnElement="SF_0111">
+        <di:waypoint x="866" y="4450" />
+        <di:waypoint x="916" y="4450" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0112_di" bpmnElement="SF_0112">
+        <di:waypoint x="1036" y="4450" />
+        <di:waypoint x="1086" y="4450" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0113_di" bpmnElement="SF_0113">
+        <di:waypoint x="1206" y="4450" />
+        <di:waypoint x="1256" y="4450" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0114_di" bpmnElement="SF_0114">
+        <di:waypoint x="1376" y="4450" />
+        <di:waypoint x="1426" y="4450" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0115_di" bpmnElement="SF_0115">
+        <di:waypoint x="1476" y="4450" />
+        <di:waypoint x="1501" y="4450" />
+        <di:waypoint x="1501" y="4480" />
+        <di:waypoint x="1526" y="4480" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1368" y="4396" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0116_di" bpmnElement="SF_0116">
+        <di:waypoint x="1476" y="4450" />
+        <di:waypoint x="1501" y="4450" />
+        <di:waypoint x="1501" y="4610" />
+        <di:waypoint x="1526" y="4610" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1455" y="4403" width="29" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0117_di" bpmnElement="SF_0117">
+        <di:waypoint x="1476" y="4450" />
+        <di:waypoint x="1501" y="4450" />
+        <di:waypoint x="1501" y="4820" />
+        <di:waypoint x="1526" y="4820" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1456" y="4703" width="67" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0118_di" bpmnElement="SF_0118">
+        <di:waypoint x="1646" y="4480" />
+        <di:waypoint x="1720" y="4480" />
+        <di:waypoint x="1720" y="4585" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0119_di" bpmnElement="SF_0119">
+        <di:waypoint x="1646" y="4610" />
+        <di:waypoint x="1695" y="4610" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0121_di" bpmnElement="SF_0121">
+        <di:waypoint x="1745" y="4610" />
+        <di:waypoint x="1781" y="4610" />
+        <di:waypoint x="1781" y="4690" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1788" y="4639" width="63" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0122_di" bpmnElement="SF_0122">
+        <di:waypoint x="1841" y="4730" />
+        <di:waypoint x="1891" y="4730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0123_di" bpmnElement="SF_0123">
+        <di:waypoint x="2011" y="4730" />
+        <di:waypoint x="2061" y="4730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0124_di" bpmnElement="SF_0124">
+        <di:waypoint x="2111" y="4730" />
+        <di:waypoint x="2136" y="4730" />
+        <di:waypoint x="2136" y="4660" />
+        <di:waypoint x="1870" y="4660" />
+        <di:waypoint x="1870" y="4570" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1997" y="4633" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0125_di" bpmnElement="SF_0125">
+        <di:waypoint x="2086" y="4755" />
+        <di:waypoint x="2086" y="4840" />
+        <di:waypoint x="2161" y="4840" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2079" y="4763" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0129_di" bpmnElement="SF_0129">
+        <di:waypoint x="2211" y="4585" />
+        <di:waypoint x="2211" y="4730" />
+        <di:waypoint x="2286" y="4730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4418" y="2942" width="26" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0133_di" bpmnElement="SF_0133">
+        <di:waypoint x="2406" y="4730" />
+        <di:waypoint x="2456" y="4730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0134_di" bpmnElement="SF_0134">
+        <di:waypoint x="2576" y="4730" />
+        <di:waypoint x="2626" y="4730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0135_di" bpmnElement="SF_0135">
+        <di:waypoint x="2746" y="4730" />
+        <di:waypoint x="2796" y="4730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0136_di" bpmnElement="SF_0136">
+        <di:waypoint x="2281" y="4840" />
+        <di:waypoint x="2814" y="4840" />
+        <di:waypoint x="2814" y="4748" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0137_di" bpmnElement="SF_0137">
+        <di:waypoint x="1646" y="4820" />
+        <di:waypoint x="1696" y="4820" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0138_di" bpmnElement="SF_0138">
+        <di:waypoint x="1816" y="4820" />
+        <di:waypoint x="1866" y="4820" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0139_di" bpmnElement="SF_0139">
+        <di:waypoint x="1986" y="4820" />
+        <di:waypoint x="2036" y="4820" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0120_di" bpmnElement="SF_0120">
+        <di:waypoint x="1745" y="4610" />
+        <di:waypoint x="1776" y="4610" />
+        <di:waypoint x="1776" y="4530" />
+        <di:waypoint x="1838" y="4530" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3119" y="6601" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0126_di" bpmnElement="SF_0126">
+        <di:waypoint x="1958" y="4530" />
+        <di:waypoint x="2016" y="4530" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0132_di" bpmnElement="SF_0132">
+        <di:waypoint x="2746" y="4560" />
+        <di:waypoint x="2822" y="4560" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0131_di" bpmnElement="SF_0131">
+        <di:waypoint x="2576" y="4560" />
+        <di:waypoint x="2626" y="4560" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0130_di" bpmnElement="SF_0130">
+        <di:waypoint x="2406" y="4560" />
+        <di:waypoint x="2456" y="4560" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0128_di" bpmnElement="SF_0128">
+        <di:waypoint x="2236" y="4560" />
+        <di:waypoint x="2286" y="4560" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4231" y="2248" width="36" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0127_di" bpmnElement="SF_0127">
+        <di:waypoint x="2136" y="4530" />
+        <di:waypoint x="2161" y="4530" />
+        <di:waypoint x="2161" y="4560" />
+        <di:waypoint x="2186" y="4560" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00j2alb_di" bpmnElement="Flow_00j2alb">
+        <di:waypoint x="1720" y="4585" />
+        <di:waypoint x="1720" y="4440" />
+        <di:waypoint x="2076" y="4440" />
+        <di:waypoint x="2076" y="4490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_err_fpB_transitErr_di" bpmnElement="SF_err_fpB_transitErr">
+        <di:waypoint x="2746" y="4618" />
+        <di:waypoint x="2746" y="4658" />
+        <di:waypoint x="2806" y="4658" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Part_FinTrust_di" bpmnElement="Part_FinTrust" isHorizontal="true">
+        <dc:Bounds x="630" y="5000" width="3400" height="240" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ftS_finReceived_di" bpmnElement="ftS_finReceived">
+        <dc:Bounds x="742" y="5042" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="718" y="5080" width="85" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SF_ftStart_di" bpmnElement="SF_ftStart">
+        <di:waypoint x="778" y="5060" />
+        <di:waypoint x="830" y="5060" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ftT_rcvCreditApp_di" bpmnElement="ftT_rcvCreditApp">
+        <dc:Bounds x="830" y="5020" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="830" y="5102" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ftT_runCreditCheck_di" bpmnElement="ftT_runCreditCheck">
+        <dc:Bounds x="1000" y="5020" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1000" y="5102" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ftG_creditApproved_di" bpmnElement="ftG_creditApproved" isMarkerVisible="true">
+        <dc:Bounds x="1170" y="5035" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1152" y="5011" width="85" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ftT_sendDecision_di" bpmnElement="ftT_sendDecision">
+        <dc:Bounds x="1270" y="5020" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1270" y="5102" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ftG_proceedPayment_di" bpmnElement="ftG_proceedPayment" isMarkerVisible="true">
+        <dc:Bounds x="1440" y="5035" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1426" y="5011" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qsb6lf_di" bpmnElement="Activity_0qsb6lf">
+        <dc:Bounds x="1270" y="5130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ftE_declined_di" bpmnElement="ftE_declined">
+        <dc:Bounds x="1552" y="5142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1544" y="5180" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ftE_fullyRepaid_di" bpmnElement="ftE_fullyRepaid">
+        <dc:Bounds x="1992" y="5042" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1970" y="5080" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ftT_rcvRepayment_di" bpmnElement="ftT_rcvRepayment">
+        <dc:Bounds x="1838" y="5020" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1838" y="5102" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ftT_payProBuild_di" bpmnElement="ftT_payProBuild">
+        <dc:Bounds x="1620" y="5020" width="120" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1620" y="5102" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SF_0140_di" bpmnElement="SF_0140">
+        <di:waypoint x="950" y="5060" />
+        <di:waypoint x="1000" y="5060" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="60" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0141_di" bpmnElement="SF_0141">
+        <di:waypoint x="1120" y="5060" />
+        <di:waypoint x="1170" y="5060" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="60" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0142_di" bpmnElement="SF_0142">
+        <di:waypoint x="1220" y="5060" />
+        <di:waypoint x="1270" y="5060" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1207" y="5032" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0143_di" bpmnElement="SF_0143">
+        <di:waypoint x="1220" y="5060" />
+        <di:waypoint x="1270" y="5060" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1209" y="5153" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0144_di" bpmnElement="SF_0144">
+        <di:waypoint x="1390" y="5060" />
+        <di:waypoint x="1440" y="5060" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="60" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0145_di" bpmnElement="SF_0145">
+        <di:waypoint x="1490" y="5060" />
+        <di:waypoint x="1620" y="5060" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1517" y="5043" width="69" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0146_di" bpmnElement="SF_0146">
+        <di:waypoint x="1465" y="5085" />
+        <di:waypoint x="1465" y="5160" />
+        <di:waypoint x="1552" y="5160" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3863" y="4103" width="64" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0147_di" bpmnElement="SF_0147">
+        <di:waypoint x="1740" y="5060" />
+        <di:waypoint x="1838" y="5060" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="60" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_0148_di" bpmnElement="SF_0148">
+        <di:waypoint x="1958" y="5060" />
+        <di:waypoint x="1992" y="5060" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="60" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kbgjx7_di" bpmnElement="Flow_1kbgjx7">
+        <di:waypoint x="1195" y="5085" />
+        <di:waypoint x="1195" y="5170" />
+        <di:waypoint x="1270" y="5170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_HireReq_di" bpmnElement="MF_HireReq" messageVisibleKind="non_initiating">
+        <di:waypoint x="947" y="930" />
+        <di:waypoint x="947" y="1490" />
+        <di:waypoint x="5320" y="1490" />
+        <di:waypoint x="5320" y="2780" />
+        <di:waypoint x="1047" y="2780" />
+        <di:waypoint x="1047" y="2288" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_BookConf_di" bpmnElement="MF_BookConf" messageVisibleKind="non_initiating">
+        <di:waypoint x="2336" y="2270" />
+        <di:waypoint x="2490" y="2270" />
+        <di:waypoint x="2490" y="2840" />
+        <di:waypoint x="2970" y="2840" />
+        <di:waypoint x="2970" y="1590" />
+        <di:waypoint x="1160" y="1590" />
+        <di:waypoint x="1160" y="930" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_THPayFail_di" bpmnElement="MF_THPayFail" messageVisibleKind="non_initiating">
+        <di:waypoint x="2106" y="2350" />
+        <di:waypoint x="2106" y="1160" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_RetailOrder_di" bpmnElement="MF_RetailOrder" messageVisibleKind="non_initiating">
+        <di:waypoint x="830" y="1140" />
+        <di:waypoint x="830" y="1466" />
+        <di:waypoint x="1190" y="1466" />
+        <di:waypoint x="1190" y="1792" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_OrderConf_di" bpmnElement="MF_OrderConf" messageVisibleKind="non_initiating">
+        <di:waypoint x="2580" y="1810" />
+        <di:waypoint x="1445" y="1810" />
+        <di:waypoint x="1445" y="1140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_FinanceOptIn_di" bpmnElement="MF_FinanceOptIn" messageVisibleKind="non_initiating">
+        <di:waypoint x="994" y="1270" />
+        <di:waypoint x="994" y="2922" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_FinApproval_di" bpmnElement="MF_FinApproval" messageVisibleKind="non_initiating">
+        <di:waypoint x="2190" y="2920" />
+        <di:waypoint x="2190" y="2180" />
+        <di:waypoint x="1306" y="2180" />
+        <di:waypoint x="1306" y="1270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_ToolReturn_di" bpmnElement="MF_ToolReturn" messageVisibleKind="non_initiating">
+        <di:waypoint x="2010" y="920" />
+        <di:waypoint x="2010" y="1660" />
+        <di:waypoint x="2790" y="1660" />
+        <di:waypoint x="2790" y="2230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_Handover_di" bpmnElement="MF_Handover" messageVisibleKind="non_initiating">
+        <di:waypoint x="1444" y="2770" />
+        <di:waypoint x="1444" y="2840" />
+        <di:waypoint x="3770" y="2840" />
+        <di:waypoint x="3770" y="3728" />
+        <di:waypoint x="160" y="3728" />
+        <di:waypoint x="160" y="4450" />
+        <di:waypoint x="916" y="4450" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_FPReturn_di" bpmnElement="MF_FPReturn" messageVisibleKind="non_initiating">
+        <di:waypoint x="2686" y="4520" />
+        <di:waypoint x="2686" y="3808" />
+        <di:waypoint x="1624" y="3808" />
+        <di:waypoint x="1624" y="2770" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_RepairAuthReq_di" bpmnElement="MF_RepairAuthReq" messageVisibleKind="non_initiating">
+        <di:waypoint x="1781" y="4690" />
+        <di:waypoint x="1781" y="4230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_RepairApproval_di" bpmnElement="MF_RepairApproval" messageVisibleKind="non_initiating">
+        <di:waypoint x="3710" y="2270" />
+        <di:waypoint x="6220" y="2270" />
+        <di:waypoint x="6220" y="3725" />
+        <di:waypoint x="2180" y="3725" />
+        <di:waypoint x="2180" y="4730" />
+        <di:waypoint x="2011" y="4730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_RepairReject_di" bpmnElement="MF_RepairReject" messageVisibleKind="non_initiating">
+        <di:waypoint x="3710" y="2400" />
+        <di:waypoint x="3710" y="3775" />
+        <di:waypoint x="1951" y="3775" />
+        <di:waypoint x="1951" y="4690" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_ServiceReport_di" bpmnElement="MF_ServiceReport" messageVisibleKind="non_initiating">
+        <di:waypoint x="2516" y="4520" />
+        <di:waypoint x="2516" y="4310" />
+        <di:waypoint x="1624" y="4310" />
+        <di:waypoint x="1624" y="2890" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_CreditApp_di" bpmnElement="MF_CreditApp" messageVisibleKind="non_initiating">
+        <di:waypoint x="1769" y="2990" />
+        <di:waypoint x="1768" y="4060" />
+        <di:waypoint x="4730" y="4060" />
+        <di:waypoint x="4730" y="5000" />
+        <di:waypoint x="890" y="4920" />
+        <di:waypoint x="890" y="4960" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_FTDecision_di" bpmnElement="MF_FTDecision" messageVisibleKind="non_initiating">
+        <di:waypoint x="1333" y="4960" />
+        <di:waypoint x="1333" y="4080" />
+        <di:waypoint x="1955" y="4080" />
+        <di:waypoint x="1955" y="2990" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_FTPayment_di" bpmnElement="MF_FTPayment" messageVisibleKind="non_initiating">
+        <di:waypoint x="1720" y="4960" />
+        <di:waypoint x="1720" y="4040" />
+        <di:waypoint x="2392" y="4040" />
+        <di:waypoint x="2392" y="3000" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_CustRepay_di" bpmnElement="MF_CustRepay" messageVisibleKind="non_initiating">
+        <di:waypoint x="1700" y="1270" />
+        <di:waypoint x="1670" y="4880" />
+        <di:waypoint x="1700" y="5000" />
+        <di:waypoint x="1838" y="5000" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MF_OOSStatus_di" bpmnElement="MF_OOSStatus" messageVisibleKind="non_initiating">
+        <di:waypoint x="1586" y="4780" />
+        <di:waypoint x="1586" y="4350" />
+        <di:waypoint x="1974" y="4350" />
+        <di:waypoint x="1974" y="2890" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="0" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
